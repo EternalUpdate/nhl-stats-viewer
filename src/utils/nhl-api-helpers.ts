@@ -215,7 +215,7 @@ export function getStatTypeIndex(statType: string, json: string): number | undef
  * @param teamID number representing the ID of the team to search as present in the NHL API
  * @returns a Promise to an array of players that match the name
  */
-async function searchTeamForPlayer (name: string, teamID: number): Promise<any> {
+export async function searchTeamForPlayer (name: string, teamID: number): Promise<any> {
     try {
       const response = await fetch(
         `https://statsapi.web.nhl.com/api/v1/teams/${teamID}/roster`
@@ -242,7 +242,7 @@ async function searchTeamForPlayer (name: string, teamID: number): Promise<any> 
  * @param name string representing the name of the desired player
  * @returns a Promise to an array of players that match that name
  */
-async function searchLeagueForPlayer(name: string): Promise<any[]> {
+export async function searchLeagueForPlayer(name: string): Promise<any[]> {
     try {
       const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/`);
       const data = await response.json();
