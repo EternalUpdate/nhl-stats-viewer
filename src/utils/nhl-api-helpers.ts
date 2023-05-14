@@ -9,7 +9,7 @@ import { transpose, addPlayerStatsRows } from "./matrix-manip";
  * @param json the JSON string from the NHL API yearByYear call
  * @returns an array of all the years the player has active stats in the NHL
  */
-function getAllNHLYears(json: string): number[][] {
+export function getAllNHLYears(json: string): number[][] {
     const years: number[][] = [];
     const data = JSON.parse(json).stats[0].splits;
     let lastYearStart = 0; // to check for duplicates (api data is sorted)
@@ -43,7 +43,7 @@ function getAllNHLYears(json: string): number[][] {
 /**
  * Mapping individual stats types to their index numbers.
  */
-const IndividualStatsTypes = {
+export const IndividualStatsTypes = {
     timeOnIce: 0, // string
     assists: 1,
     goals: 2,
@@ -77,7 +77,7 @@ const IndividualStatsTypes = {
  * @returns an array containing the NHL stats of the queried player with the
  * stats categories in the columns and the seasons in the rows
  */
-function getPlayerStatsPerYear(json: string): (number | string)[][] {
+export function getPlayerStatsPerYear(json: string): (number | string)[][] {
     const data = JSON.parse(json).stats[0].splits;
     let lastYearStart = 0; // to check for duplicates (api data is sorted)
     const statsPerYear: (number | string)[][] = [];
@@ -114,13 +114,26 @@ function getPlayerStatsPerYear(json: string): (number | string)[][] {
 }
 
 /**
+ * Returns an array containing grouped stats over the years (i.e. all goals per year in one row, etc.).
+ * 
+ * @param json JSON string from the NHL API call to yearByYear or single season stats
+ * @returns an array containing grouped stats over the years
+ */
+export function getGroupedStatsOverTheYears(json: string): (number | string)[][] {
+    let groupedStats: (number | string)[][] = getPlayerStatsPerYear(json);
+    groupedStats = transpose(groupedStats);
+
+    return groupedStats;
+}
+
+/**
  * Returns the headers for the individual player stats for a JSON string from the
  * yearByYear and individual season NHL API calls.
  * 
  * @param json JSON string from the yearByYear and individual season NHL API calls
  * @returns an array of strings containing the headers for the individual player stats
  */
-function getStatTypesHeaders(json: string): string[] {
+export function getStatTypesHeaders(json: string): string[] {
     const data = JSON.parse(json).stats[0].splits;
     const statTypesHeaders: string[] = [];
 
@@ -152,7 +165,8 @@ fetch("https://statsapi.web.nhl.com/api/v1/people/8476981/stats?stats=yearByYear
         console.log(getAllNHLYears(result));
         console.log(getPlayerStatsPerYear(result));
         console.log(getStatTypesHeaders(result));
-        console.log(JSON.parse(result).stats[0].splits) 
+        console.log(getGroupedStatsOverTheYears(result));
+        console.log(JSON.parse(result).stats[0].splits);
     })
     .catch(error => console.log('error', error));
 
