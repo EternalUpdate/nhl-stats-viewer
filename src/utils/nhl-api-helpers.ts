@@ -44,29 +44,29 @@ function getAllNHLYears(json: string): number[][] {
  * Mapping individual stats types to their index numbers.
  */
 const IndividualStatsTypes = {
-    assists: 0,
-    blocked: 1,
-    evenTimeOnIce: 2,
-    faceOffPct: 3,
-    gameWinningGoals: 4,
+    timeOnIce: 0, // string
+    assists: 1,
+    goals: 2,
+    pim: 3,
+    shots: 4,
     games: 5,
-    goals: 6,
-    hits: 7,
-    overTimeGoals: 8,
-    penaltyMinutes: 9, // string
-    pim: 10,
-    plusMinus: 11,
-    points: 12,
-    powerPlayGoals: 13,
-    powerPlayPoints: 14,
-    powerPlayTimeOnIce: 15, // string
-    shifts: 16,
-    shortHandedGoals: 17,
-    shortHandedPoints: 18,
-    shortHandedTimeOnIce: 19, // string
-    shotPct: 20,
-    shots: 21,
-    timeOnIce: 22, // string
+    hits: 6,
+    powerPlayGoals: 7,
+    powerPlayPoints: 8,
+    powerPlayTimeOnIce: 9, // string
+    evenTimeOnIce: 10,
+    penaltyMinutes: 11, // string
+    faceOffPct: 12,
+    shotPct: 13,
+    gameWinningGoals: 14,
+    overTimeGoals: 15,
+    shortHandedGoals: 16,
+    shortHandedPoints: 17,
+    shortHandedTimeOnIce: 18, // string
+    blocked: 19,
+    plusMinus: 20,
+    points: 21,
+    shifts: 22,
 } as const;
 
 /**
@@ -77,7 +77,7 @@ const IndividualStatsTypes = {
  * @returns an array containing the NHL stats of the queried player with the
  * stats categories in the columns and the seasons in the rows
  */
-function getStatsPerYear(json: string): (number | string)[][] {
+function getPlayerStatsPerYear(json: string): (number | string)[][] {
     const data = JSON.parse(json).stats[0].splits;
     let lastYearStart = 0; // to check for duplicates (api data is sorted)
     const statsPerYear: (number | string)[][] = [];
@@ -91,8 +91,8 @@ function getStatsPerYear(json: string): (number | string)[][] {
             const yearStart: number = parseInt(yearString.substring(0, 4));
 
             // populate stat year row
-            for (const stat in data[i].stat) {
-                currentRow.push(stat);
+            for (const statName in data[i].stat) {
+                currentRow.push(data[i].stat[statName]);
             }
 
             // add preceding row to current row if same season (changed team)
@@ -113,6 +113,32 @@ function getStatsPerYear(json: string): (number | string)[][] {
     return statsPerYear;
 }
 
+/**
+ * Returns the headers for the individual player stats for a JSON string from the
+ * yearByYear and individual season NHL API calls.
+ * 
+ * @param json JSON string from the yearByYear and individual season NHL API calls
+ * @returns an array of strings containing the headers for the individual player stats
+ */
+function getStatTypesHeaders(json: string): string[] {
+    const data = JSON.parse(json).stats[0].splits;
+    const statTypesHeaders: string[] = [];
+
+    for (const i in data) {
+        const league: string = data[i].league.name;
+
+        if (league == "National Hockey League") {
+            for (const statName in data[i].stat) {
+                statTypesHeaders.push(statName);
+            }
+
+            break;
+        }
+    }
+    
+    return statTypesHeaders;
+}
+
 // test queries
 const requestOptions: RequestInit = {
     method: 'GET',
@@ -124,6 +150,8 @@ fetch("https://statsapi.web.nhl.com/api/v1/people/8476981/stats?stats=yearByYear
     .then((result) => { 
         console.log("Andy's:\n");
         console.log(getAllNHLYears(result));
+        console.log(getPlayerStatsPerYear(result));
+        console.log(getStatTypesHeaders(result));
         console.log(JSON.parse(result).stats[0].splits) 
     })
     .catch(error => console.log('error', error));
