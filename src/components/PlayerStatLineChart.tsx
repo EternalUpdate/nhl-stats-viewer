@@ -120,13 +120,28 @@ const SingleStatPlayerLineChart = ({
     const chartTitle =
         title || (statTypes.length === 1 ? statTypes[0] : "Multiple Stats");
 
+    let maxWidth = "0px";
+    let maxHeight = "0px";
+
+    if (statTypes.length > 2) {
+        maxWidth = "500px";
+        maxHeight = "300px";
+    } else {
+        maxWidth = "400px";
+        maxHeight = "250px";
+    }
+
+    // Check if data has been fetched
+    if (data.labels.length === 0 || data.datasets.length === 0) {
+        return null; // or display a loading state, error message, etc.
+    }
+
     return (
         <Box
-            p={{ base: "6", md: "16" }}
-            px={{ base: "0" }}
-            py={{ md: "6" }}
-            m={{ md: "9" }}
-            mt={{ md: "-1" }}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
         >
             <Text
                 fontSize={{ base: "md", md: "xl", lg: "2xl" }}
@@ -134,7 +149,10 @@ const SingleStatPlayerLineChart = ({
             >
                 {chartTitle}
             </Text>
-            <Box w="100%" h={{ base: "250px", md: "400px", lg: "500px" }}>
+            <Box
+                w={{ base: "375px", md: maxWidth }}
+                h={{ base: "250px", md: maxHeight }}
+            >
                 <Line options={options} data={data} />
             </Box>
         </Box>
