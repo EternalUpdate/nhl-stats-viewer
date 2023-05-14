@@ -31,13 +31,43 @@ function App() {
                     statTypes={["goals", "assists", "points"]}
                     title="Goals, Assists, and Points"
                 />
+                <Box
+                    display={{ base: "block", md: "flex" }}
+                    flexGrow="1"
+                    flexDirection="row"
+                    flexWrap="wrap"
+                    gap="70px"
+                    justifyContent="space-evenly"
+                    alignContent="center"
+                >
+                    <PlayerStatLineChart
+                        playerID={8476981}
+                        statTypes={["shots"]}
+                        title="Shots"
+                    />
+                    <PlayerStatLineChart
+                        playerID={8476981}
+                        statTypes={["shotPct"]}
+                        title="Shot Percentage"
+                    />
+                </Box>
             </Section>
 
-            <Section title="Health">
+            <Section title="Health and Utilization">
                 <PlayerStatLineChart
                     playerID={8476981}
                     statTypes={["games"]}
                     title="Games Played"
+                />
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["evenTimeOnIce"]}
+                    title="Even Strength Total Time on Ice per Season"
+                />
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["shifts"]}
+                    title="Shifts"
                 />
             </Section>
 
@@ -58,12 +88,51 @@ function App() {
                 <PlayerStatLineChart
                     playerID={8476981}
                     statTypes={["powerPlayGoals", "powerPlayPoints"]}
-                    title="Power Play"
+                    title="Power Play (Production)"
+                />
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["powerPlayTimeOnIce"]}
+                    title="Power Play (Total TOI per Season)"
                 />
                 <PlayerStatLineChart
                     playerID={8476981}
                     statTypes={["shortHandedGoals", "shortHandedPoints"]}
                     title="Penalty Kill"
+                />
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["shortHandedTimeOnIce"]}
+                    title="Penalty Kill (Total TOI per Season)"
+                />
+            </Section>
+
+            <Section title="Clutch Factor">
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["gameWinningGoals", "overtimeGoals"]}
+                    title="Game Winning and Overtime Goals"
+                />
+            </Section>
+
+            <Section title="Defense">
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["blocked"]}
+                    title="Blocked Shots"
+                />
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["plusMinus"]}
+                    title="Plus Minus"
+                />
+            </Section>
+
+            <Section title="Face-offs">
+                <PlayerStatLineChart
+                    playerID={8476981}
+                    statTypes={["faceoffPct"]}
+                    title="Face-Off Percentage"
                 />
             </Section>
         </>
