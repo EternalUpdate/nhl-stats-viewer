@@ -41,6 +41,30 @@ export function getAllNHLYears(json: string): number[][] {
 }
 
 /**
+ * Creates labels in the format startYear-endYear from the player's active NHL seasons.
+ * 
+ * @param yearPairs (optional) a 2D array containing pairs of years
+ * @param json (optional) the JSON string from a yearByYear NHL API call to generate the year pairs from
+ * @returns labels in the format startYear-endYear
+ */
+export function getLabelsFromNHLYears(yearPairs?: number[][], json?: string): string[] {
+    const labels: string[] = [];
+
+    if (json) {
+        yearPairs = getAllNHLYears(json);
+    }
+
+    if (yearPairs) {
+        for (const pair of yearPairs) {
+            const label = `${pair[0]}-${pair[1]}`
+            labels.push(label);
+        }
+    }
+
+    return labels;
+}
+
+/**
  * Mapping individual stats types to their index numbers.
  */
 export const IndividualStatsTypes = {
@@ -163,6 +187,7 @@ fetch("https://statsapi.web.nhl.com/api/v1/people/8476981/stats?stats=yearByYear
     .then((result) => { 
         console.log("Andy's:\n");
         console.log(getAllNHLYears(result));
+        console.log(getLabelsFromNHLYears(undefined, result));
         console.log(getPlayerStatsPerYear(result));
         console.log(getStatTypesHeaders(result));
         console.log(getGroupedStatsOverTheYears(result));
