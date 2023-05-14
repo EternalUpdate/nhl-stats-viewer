@@ -2,10 +2,23 @@ import "./App.css";
 import PlayerStatLineChart from "./components/PlayerStatLineChart";
 import { Text, Heading, Box, Link } from "@chakra-ui/react";
 import { Section } from "./components/Section";
+import PlayerSearchComponent from "./components/PlayerSearchComponent";
+import { useState } from "react";
 
 function App() {
+    const [playerID, setPlayerID] = useState(8476981); // Default player ID
+
+    const handlePlayerSearch = async (playerID: number) => {
+        if (playerID) {
+            setPlayerID(playerID); // Update the player ID with the ID of the first found player
+            console.log(playerID);
+        }
+    };
+
     return (
         <>
+            <PlayerSearchComponent onPlayerSearch={handlePlayerSearch} />
+
             <Heading size="lg" fontWeight="semibold" pt={{ base: "1" }}>
                 NHL Stat Viewer
             </Heading>
@@ -17,6 +30,7 @@ function App() {
                 className="player-info-container"
                 m="1"
                 pt={{ base: "12", md: "16" }}
+                mb={{ md: "-10" }}
             >
                 <Text fontSize="2xl">Josh Anderson</Text>
                 <Text fontSize="md" color="gray.500">
@@ -26,7 +40,7 @@ function App() {
 
             <Section title="Production">
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["goals", "assists", "points"]}
                     title="Goals, Assists, and Points"
                 />
@@ -40,12 +54,12 @@ function App() {
                     alignContent="center"
                 >
                     <PlayerStatLineChart
-                        playerID={8476981}
+                        playerID={playerID}
                         statTypes={["shots"]}
                         title="Shots"
                     />
                     <PlayerStatLineChart
-                        playerID={8476981}
+                        playerID={playerID}
                         statTypes={["shotPct"]}
                         title="Shot Percentage"
                     />
@@ -54,17 +68,17 @@ function App() {
 
             <Section title="Health and Utilization">
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["games"]}
                     title="Games Played"
                 />
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["evenTimeOnIce"]}
                     title="Even Strength Total Time on Ice per Season"
                 />
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["shifts"]}
                     title="Shifts"
                 />
@@ -72,12 +86,12 @@ function App() {
 
             <Section title="Physicality">
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["hits"]}
                     title="Hits"
                 />
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["pim"]}
                     title="Penalty Minutes"
                 />
@@ -85,22 +99,22 @@ function App() {
 
             <Section title="Special Units">
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["powerPlayGoals", "powerPlayPoints"]}
                     title="Power Play (Production)"
                 />
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["powerPlayTimeOnIce"]}
                     title="Power Play (Total TOI per Season)"
                 />
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["shortHandedGoals", "shortHandedPoints"]}
                     title="Penalty Kill"
                 />
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["shortHandedTimeOnIce"]}
                     title="Penalty Kill (Total TOI per Season)"
                 />
@@ -108,7 +122,7 @@ function App() {
 
             <Section title="Clutch Factor">
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["gameWinningGoals", "overtimeGoals"]}
                     title="Game Winning and Overtime Goals"
                 />
@@ -116,12 +130,12 @@ function App() {
 
             <Section title="Defense">
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["blocked"]}
                     title="Blocked Shots"
                 />
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["plusMinus"]}
                     title="Plus Minus"
                 />
@@ -129,7 +143,7 @@ function App() {
 
             <Section title="Face-offs">
                 <PlayerStatLineChart
-                    playerID={8476981}
+                    playerID={playerID}
                     statTypes={["faceoffPct"]}
                     title="Face-Off Percentage"
                 />
