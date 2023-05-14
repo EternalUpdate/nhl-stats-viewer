@@ -15,6 +15,8 @@ import {
     getSingleStatOverTheYears,
 } from "../utils/nhl-api-helpers";
 import { Text, Box } from "@chakra-ui/react";
+import { minuteSecondStringToNum } from "../utils/time-helpers";
+import { numToMinuteSecond } from "../utils/time-helpers";
 
 // Register the necessary scales and elements
 ChartJS.register(
@@ -61,10 +63,18 @@ const SingleStatPlayerLineChart = ({
 
                 // Prepare datasets for each stat type
                 const datasets = statTypes.map((statType, index) => {
-                    const chartData = getSingleStatOverTheYears(
+                    let chartData = getSingleStatOverTheYears(
                         jsonString,
                         statType
                     );
+                    if (statType.toLowerCase().includes("time")) {
+                        chartData = chartData.map((time) => {
+                            if (typeof time === "string") {
+                                return minuteSecondStringToNum(time);
+                            }
+                            return time;
+                        });
+                    }
 
                     // Define an array of colors
                     const colors = [
@@ -102,6 +112,45 @@ const SingleStatPlayerLineChart = ({
                         },
                         title: {
                             display: false,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context: any) => {
+                                    let label = context.dataset.label || "";
+                                    if (label) {
+                                        label += ": "; // e.g., "evenTimeOnIce: "
+                                    }
+                                    if (
+                                        statTypes[0]
+                                            .toLowerCase()
+                                            .includes("time")
+                                    ) {
+                                        label += numToMinuteSecond(
+                                            context.parsed.y
+                                        ); // adds the formatted time ("evenTimeOnIce: 964:48")
+                                    } else {
+                                        label += context.parsed.y;
+                                    }
+
+                                    return label;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: (seconds: number) => {
+                                    if (
+                                        statTypes[0]
+                                            .toLowerCase()
+                                            .includes("time")
+                                    ) {
+                                        return numToMinuteSecond(seconds);
+                                    }
+                                    return seconds;
+                                },
+                            },
                         },
                     },
                 });
@@ -142,7 +191,7 @@ const SingleStatPlayerLineChart = ({
             justifyContent="center"
             alignItems="center"
             flexDirection="column"
-            mb={{ base: "16", md: "-4" }}
+            mb={{ base: "14", md: "-4" }}
         >
             <Text
                 fontSize={{ base: "md", md: "xl", lg: "2xl" }}
@@ -151,7 +200,7 @@ const SingleStatPlayerLineChart = ({
                 {chartTitle}
             </Text>
             <Box
-                w={{ base: "375px", md: maxWidth }}
+                w={{ base: "320px", md: maxWidth }}
                 h={{ base: "250px", md: maxHeight }}
             >
                 <Line options={options} data={data} />
