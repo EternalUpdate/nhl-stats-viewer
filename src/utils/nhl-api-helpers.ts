@@ -122,9 +122,9 @@ export function getPlayerStatsPerYear(json: string): (number | string)[][] {
             // add preceding row to current row if same season (changed team)
             if (yearStart === lastYearStart) {
                 // get previous row
-                let previousRow = statsPerYear[statsPerYear.length-1];
+                const previousRow = statsPerYear[statsPerYear.length-1];
                 // add to current row and update
-                previousRow = addPlayerStatsRows(previousRow, currentRow);
+                statsPerYear[statsPerYear.length-1]= addPlayerStatsRows(previousRow, currentRow);
             } else {
                 // add stat row to final array
                 statsPerYear.push(currentRow);
