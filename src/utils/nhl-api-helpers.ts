@@ -232,17 +232,50 @@ async function searchTeamForPlayer (name: string, teamID: number): Promise<any> 
   
       return filteredPlayers;
     } catch (error) {
-      console.log("Error searching players:", error);
+      console.log("searchTeamForPlayer(): ", error);
     }
 }
 
-searchTeamForPlayer("J", 8).then((players) => console.log(players)).catch((error) => console.log("Error"));
+/**
+ * Searches the league for a given player and returns a Promise to an array of players that match that name.
+ * 
+ * @param name string representing the name of the desired player
+ * @returns a Promise to an array of players that match that name
+ */
+async function searchLeagueForPlayer(name: string): Promise<any[]> {
+    try {
+      const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/`);
+      const data = await response.json();
+  
+      const searchPromises = data.teams.map((team: any) => searchTeamForPlayer(name, team.id));
+  
+      const foundPlayers = await Promise.all(searchPromises);
+        
+      // Extract the first element from each non-empty array
+      const filteredPlayers = foundPlayers
+      .filter((players: any[]) => players.length > 0)
+      .map((players: any[]) => players[0]);
+  
+      return filteredPlayers;
+    } catch (error) {
+      console.log("searchLeagueForPlayer(): ", error);
+      return []; // Return an empty array as a fallback
+    }
+}
 
 // test queries
+searchTeamForPlayer("J", 8).then((players) => console.log(players)).catch((error) => console.log("Error"));
+searchLeagueForPlayer("Josh").then((players) => console.log(players)).catch((error) => console.log("Error"));
 // const requestOptions: RequestInit = {
 //     method: 'GET',
 //     redirect: 'follow'
 //   };
+
+//   fetch("https://statsapi.web.nhl.com/api/v1/teams/", requestOptions)
+//      .then(response => response.json())
+//     .then((result) => { 
+//       console.log(result.teams);})
+//       .catch(error => console.log("error", error));
 
 // fetch("https://statsapi.web.nhl.com/api/v1/people/8476981/stats?stats=yearByYear", requestOptions)
 //     .then(response => response.text())
