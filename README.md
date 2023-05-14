@@ -14,7 +14,7 @@ The app is styled with [Chakra UI](https://github.com/chakra-ui/chakra-ui).
 https://nhl-stats-viewer.netlify.app
 
 ## Future Features
-* Search for players
+* Offer search differentiation for players with same name
 * Adding league averages to the graphs
 * Individual time average graphs
 * Compare two (or more?) players
