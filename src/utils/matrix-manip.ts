@@ -55,8 +55,10 @@ export function addPlayerStatsRows(row1: (number | string)[], row2: (number | st
             sum = addMinuteSecond(stat1, stat2);
         }
 
-        if (sum) {
+        if (sum || sum===0) {
             sumRow.push(sum);
+        } else {
+            console.log(`row1[${i}]: ${row1[i]} row2[${i}]: ${row2[i]}`);
         }
     }
 
