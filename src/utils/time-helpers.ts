@@ -42,7 +42,7 @@ export function numToMinuteSecond(totalSeconds: number) {
  * @param formatted boolean specifying whether the function should return a formatted string or not
  * @returns the total in seconds or as a string in the "minutes:seconds" format as specified
  */
-export function addMinuteSecond(timeString1: string, timeString2: string, formatted=false): number | string {
+export function addMinuteSecond(timeString1: string, timeString2: string, formatted=true): number | string {
     const totalSeconds1 = minuteSecondStringToNum(timeString1);
     const totalSeconds2 = minuteSecondStringToNum(timeString2);
 
