@@ -194,7 +194,7 @@ const SingleStatPlayerLineChart = ({
             mb={{ base: "14", md: "-4" }}
         >
             <Text
-                fontSize={{ base: "md", md: "xl", lg: "2xl" }}
+                fontSize={{ base: "md", md: "lg", lg: "xl" }}
                 mb={{ base: "3", md: "4", lg: "6" }}
             >
                 {chartTitle}
