@@ -151,6 +151,24 @@ export function getGroupedStatsOverTheYears(json: string): (number | string)[][]
 }
 
 /**
+ * Returns an array containing a record of a single type of stat over the player's active NHL years.
+ * 
+ * @param json JSON string from the NHL API call to yearByYear or single season stats
+ * @param statType string representing the name of the statistic as used in the NHL API
+ * @returns an array containing a record of a single type of stat over the player's active NHL years
+ */
+export function getSingleStatOverTheYears(json: string, statType: string): (number | string)[] {
+    const index = getStatTypeIndex(statType, json);
+    const groupedStats = getGroupedStatsOverTheYears(json);
+
+    if (index) {
+        return groupedStats[index];
+    }
+
+    return [];
+}
+
+/**
  * Returns the headers for the individual player stats for a JSON string from the
  * yearByYear and individual season NHL API calls.
  * 
@@ -179,7 +197,7 @@ export function getStatTypesHeaders(json: string): string[] {
 /**
  * Finds the index for a given stat type. For use with the stats per year and over the years methods.
  * 
- * @param statType name of the stat as used in the NHL API
+ * @param statType string representing the name of the statistic as used in the NHL API
  * @param json JSON string from the yearByYear and individual season NHL API calls
  * @returns the index for a given stat type
  */
