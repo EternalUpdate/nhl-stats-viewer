@@ -263,9 +263,31 @@ export async function searchLeagueForPlayer(name: string): Promise<any[]> {
     }
 }
 
+/**
+ * Returns a Promise to the given player's information from the people portion of the NHL API.
+ * 
+ * @param playerID number corresponding to the desired player
+ * @returns a Promise to the given player's information
+ */
+export async function getPlayerInfo(playerID: number): Promise<any[]> {
+    try {
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}`)
+        const data = await response.json();
+
+        const playerInfo = data.people;
+
+        return playerInfo;
+    } catch (error) {
+        console.log("getPlayerInfo(): ", error);
+        return [];
+    }
+}
+
 // test queries
-searchTeamForPlayer("J", 8).then((players) => console.log(players)).catch((error) => console.log("Error"));
-searchLeagueForPlayer("Josh").then((players) => console.log(players)).catch((error) => console.log("Error"));
+
+// searchTeamForPlayer("J", 8).then((players) => console.log(players)).catch((error) => console.log("Error"));
+// searchLeagueForPlayer("Josh").then((players) => console.log(players)).catch((error) => console.log("Error"));
+
 // const requestOptions: RequestInit = {
 //     method: 'GET',
 //     redirect: 'follow'
