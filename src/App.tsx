@@ -1,6 +1,6 @@
 import "./App.css";
 import PlayerStatLineChart from "./components/PlayerStatLineChart";
-import { Text, Heading, Box } from "@chakra-ui/react";
+import { Text, Heading, Box, Link } from "@chakra-ui/react";
 import { Section } from "./components/Section";
 
 function App() {
@@ -17,7 +17,6 @@ function App() {
                 className="player-info-container"
                 m="1"
                 pt={{ base: "12", md: "16" }}
-                mb={{ md: "20" }}
             >
                 <Text fontSize="2xl">Josh Anderson</Text>
                 <Text fontSize="md" color="gray.500">
@@ -135,6 +134,15 @@ function App() {
                     title="Face-Off Percentage"
                 />
             </Section>
+            <Text fontSize="sm" mt="28" color="gray.500">
+                Brought to you by{" "}
+                <Link
+                    href="https://github.com/EternalUpdate/nhl-stats-viewer/tree/main"
+                    target="_blank"
+                >
+                    EternalUpdate
+                </Link>
+            </Text>
         </>
     );
 }
