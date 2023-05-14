@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/react";
+import { Text, Box } from "@chakra-ui/react";
 
 interface SectionProps {
     title: string;
@@ -11,12 +11,22 @@ export function Section({ title, children }: SectionProps) {
             <Text
                 fontSize={{ base: "2xl", md: "3xl" }}
                 textAlign="left"
-                mt={{ base: "16", md: "24" }}
+                mt={{ base: "14", md: "14" }}
                 mb={{ base: "1" }}
             >
                 {title}
             </Text>
-            {children}
+            <Box
+                display={{ base: "block", md: "flex" }}
+                flexGrow="1"
+                flexDirection="row"
+                flexWrap="wrap"
+                gap="70px"
+                justifyContent="space-evenly"
+                alignContent="center"
+            >
+                {children}
+            </Box>
         </>
     );
 }
