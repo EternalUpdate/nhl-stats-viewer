@@ -1,12 +1,13 @@
 #root {
-  max-width: 1280px;
+  width: 100%;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem;
   text-align: center;
 }
 
-.single-chart-container {
-  width: 500px;
-  height: 500px;
+@media only screen and (min-width: 2000px) {
+  #root {
+    max-width: 60%;
+  }
 }

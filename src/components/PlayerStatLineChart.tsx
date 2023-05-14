@@ -14,6 +14,7 @@ import {
     getLabelsFromNHLYears,
     getSingleStatOverTheYears,
 } from "../utils/nhl-api-helpers";
+import { Text, Box } from "@chakra-ui/react";
 
 // Register the necessary scales and elements
 ChartJS.register(
@@ -29,11 +30,13 @@ ChartJS.register(
 interface PlayerStatLineChartProps {
     playerID: number;
     statTypes: string[];
+    title?: string;
 }
 
 const SingleStatPlayerLineChart = ({
     playerID,
     statTypes,
+    title,
 }: PlayerStatLineChartProps) => {
     const [options, setOptions] = useState<object>({});
     const [data, setData] = useState<any>({
@@ -91,6 +94,7 @@ const SingleStatPlayerLineChart = ({
                 // Chart.js variables
                 setOptions({
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: "top" as const,
@@ -113,15 +117,27 @@ const SingleStatPlayerLineChart = ({
         fetchData();
     }, [playerID, statTypes]);
 
+    const chartTitle =
+        title || (statTypes.length === 1 ? statTypes[0] : "Multiple Stats");
+
     return (
-        <div className="single-chart-container">
-            <div className="chart-wrapper">
-                <div className="chart-title">
-                    {statTypes.length === 1 ? statTypes[0] : "Multiple Stats"}
-                </div>
+        <Box
+            p={{ base: "6", md: "16" }}
+            px={{ base: "0" }}
+            py={{ md: "6" }}
+            m={{ md: "9" }}
+            mt={{ md: "-1" }}
+        >
+            <Text
+                fontSize={{ base: "md", md: "xl", lg: "2xl" }}
+                mb={{ base: "3", md: "4", lg: "6" }}
+            >
+                {chartTitle}
+            </Text>
+            <Box w="100%" h={{ base: "250px", md: "400px", lg: "500px" }}>
                 <Line options={options} data={data} />
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 };
 
