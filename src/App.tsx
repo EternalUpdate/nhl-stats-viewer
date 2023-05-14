@@ -4,6 +4,7 @@ import { Text, Heading, Box, Link } from "@chakra-ui/react";
 import { Section } from "./components/Section";
 import PlayerSearchComponent from "./components/PlayerSearchComponent";
 import { useState } from "react";
+import PlayerInfoComponent from "./components/PlayerInfoComponent";
 
 function App() {
     const [playerID, setPlayerID] = useState(8476981); // Default player ID
@@ -26,17 +27,7 @@ function App() {
                 See progress over time{" "}
             </Text>
 
-            <Box
-                className="player-info-container"
-                m="1"
-                pt={{ base: "12", md: "16" }}
-                mb={{ md: "-10" }}
-            >
-                <Text fontSize="2xl">Josh Anderson</Text>
-                <Text fontSize="md" color="gray.500">
-                    #17 MTL | 29 yrs | 6'3 | 218 lbs
-                </Text>
-            </Box>
+            <PlayerInfoComponent playerID={playerID}></PlayerInfoComponent>
 
             <Section title="Production">
                 <PlayerStatLineChart
