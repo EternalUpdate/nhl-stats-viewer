@@ -176,30 +176,44 @@ export function getStatTypesHeaders(json: string): string[] {
     return statTypesHeaders;
 }
 
+/**
+ * Finds the index for a given stat type. For use with the stats per year and over the years methods.
+ * 
+ * @param statType name of the stat as used in the NHL API
+ * @param json JSON string from the yearByYear and individual season NHL API calls
+ * @returns the index for a given stat type
+ */
+export function getStatTypeIndex(statType: string, json: string): number | undefined {
+    const headers = getStatTypesHeaders(json);
+    const index = headers.findIndex((header) => header.toLowerCase === statType.toLowerCase);
+
+    return index;
+}
+
 // test queries
-const requestOptions: RequestInit = {
-    method: 'GET',
-    redirect: 'follow'
-  };
+// const requestOptions: RequestInit = {
+//     method: 'GET',
+//     redirect: 'follow'
+//   };
 
-fetch("https://statsapi.web.nhl.com/api/v1/people/8476981/stats?stats=yearByYear", requestOptions)
-    .then(response => response.text())
-    .then((result) => { 
-        console.log("Andy's:\n");
-        console.log(getAllNHLYears(result));
-        console.log(getLabelsFromNHLYears(undefined, result));
-        console.log(getPlayerStatsPerYear(result));
-        console.log(getStatTypesHeaders(result));
-        console.log(getGroupedStatsOverTheYears(result));
-        console.log(JSON.parse(result).stats[0].splits);
-    })
-    .catch(error => console.log('error', error));
+// fetch("https://statsapi.web.nhl.com/api/v1/people/8476981/stats?stats=yearByYear", requestOptions)
+//     .then(response => response.text())
+//     .then((result) => { 
+//         console.log("Andy's:\n");
+//         console.log(getAllNHLYears(result));
+//         console.log(getLabelsFromNHLYears(undefined, result));
+//         console.log(getPlayerStatsPerYear(result));
+//         console.log(getStatTypesHeaders(result));
+//         console.log(getGroupedStatsOverTheYears(result));
+//         console.log(JSON.parse(result).stats[0].splits);
+//     })
+//     .catch(error => console.log('error', error));
 
-fetch("https://statsapi.web.nhl.com/api/v1/people/8477500/stats?stats=yearByYear", requestOptions)
-    .then(response => response.text())
-    .then((result) => { 
-        console.log("Horvat's:\n");
-        console.log(getAllNHLYears(result));
-        console.log(JSON.parse(result).stats[0].splits) 
-    })
-    .catch(error => console.log('error', error));
+// fetch("https://statsapi.web.nhl.com/api/v1/people/8477500/stats?stats=yearByYear", requestOptions)
+//     .then(response => response.text())
+//     .then((result) => { 
+//         console.log("Horvat's:\n");
+//         console.log(getAllNHLYears(result));
+//         console.log(JSON.parse(result).stats[0].splits) 
+//     })
+//     .catch(error => console.log('error', error));
