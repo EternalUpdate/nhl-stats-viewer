@@ -11,9 +11,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import {
-    IndividualStatsTypes,
-    getGroupedStatsOverTheYears,
     getLabelsFromNHLYears,
+    getSingleStatOverTheYears,
 } from "../utils/nhl-api-helpers";
 
 // Register the necessary scales and elements
@@ -32,7 +31,10 @@ interface singleStatPlayerLineChartProps {
     statType: string;
 }
 
-const SingleStatPlayerLineChart = (singleStatPlayerLineChartProps) => {
+const SingleStatPlayerLineChart = ({
+    playerID,
+    statType,
+}: singleStatPlayerLineChartProps) => {
     const [options, setOptions] = useState<object>({});
     const [data, setData] = useState<any>({
         labels: [],
@@ -43,7 +45,7 @@ const SingleStatPlayerLineChart = (singleStatPlayerLineChartProps) => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `https://statsapi.web.nhl.com/api/v1/people/${singleStatPlayerLineChartProps.playerID}/stats?stats=yearByYear`
+                    `https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=yearByYear`
                 );
                 const result = await response.json();
 
@@ -53,10 +55,10 @@ const SingleStatPlayerLineChart = (singleStatPlayerLineChartProps) => {
                     undefined,
                     jsonString
                 );
-                const chartData =
-                    getGroupedStatsOverTheYears(jsonString)[
-                        IndividualStatsTypes.goals
-                    ];
+                const chartData = getSingleStatOverTheYears(
+                    jsonString,
+                    statType
+                );
 
                 // Chart.js variables
                 setOptions({
@@ -68,7 +70,7 @@ const SingleStatPlayerLineChart = (singleStatPlayerLineChartProps) => {
                         },
                         title: {
                             display: true,
-                            text: "Goals",
+                            text: statType,
                         },
                     },
                 });
@@ -76,7 +78,7 @@ const SingleStatPlayerLineChart = (singleStatPlayerLineChartProps) => {
                     labels: chartLabels,
                     datasets: [
                         {
-                            label: "Goals",
+                            label: statType,
                             data: chartData,
                             borderColor: "rgb(255, 99, 132)",
                             backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -89,7 +91,7 @@ const SingleStatPlayerLineChart = (singleStatPlayerLineChartProps) => {
         };
 
         fetchData();
-    }, []);
+    }, [playerID, statType]);
 
     return (
         <div className="single-chart-container">
