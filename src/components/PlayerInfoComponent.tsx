@@ -9,6 +9,7 @@ const PlayerInfoComponent = ({ playerID }: { playerID: number }) => {
     const [age, setAge] = useState<number>(100);
     const [height, setHeight] = useState<string>("4'2");
     const [weight, setWeight] = useState<number>(200);
+    const [position, setPosition] = useState<string>("C");
 
     useEffect(() => {
         const fetchPlayerInfo = async () => {
@@ -21,6 +22,7 @@ const PlayerInfoComponent = ({ playerID }: { playerID: number }) => {
                 setAge(playerInfo.currentAge);
                 setHeight(playerInfo.height);
                 setWeight(playerInfo.weight);
+                setPosition(playerInfo.primaryPosition.abbreviation);
             } catch (error) {
                 console.log("Error fetching player info: ", error);
             }
@@ -40,7 +42,7 @@ const PlayerInfoComponent = ({ playerID }: { playerID: number }) => {
                 <Text fontSize="2xl">{name}</Text>
                 <Text fontSize="md" color="gray.500">
                     #{jerseyNumber} {teamAbbr} | {age} yrs | {height} | {weight}{" "}
-                    lbs
+                    lbs | {position}
                 </Text>
             </Box>
         </>
