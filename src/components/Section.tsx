@@ -11,8 +11,8 @@ export function Section({ title, children }: SectionProps) {
             <Text
                 fontSize={{ base: "2xl", md: "3xl" }}
                 textAlign="left"
-                mt={{ base: "14", md: "14" }}
-                mb={{ base: "1" }}
+                mt={{ base: "14", md: "16" }}
+                mb={{ base: "2" }}
             >
                 {title}
             </Text>

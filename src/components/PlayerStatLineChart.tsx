@@ -142,6 +142,7 @@ const SingleStatPlayerLineChart = ({
             justifyContent="center"
             alignItems="center"
             flexDirection="column"
+            mb={{ base: "16", md: "-4" }}
         >
             <Text
                 fontSize={{ base: "md", md: "xl", lg: "2xl" }}
