@@ -165,7 +165,7 @@ export function getSingleStatOverTheYears(json: string, statType: string): (numb
         return groupedStats[index];
     }
 
-    return [];
+    return [-1];
 }
 
 /**
@@ -203,7 +203,7 @@ export function getStatTypesHeaders(json: string): string[] {
  */
 export function getStatTypeIndex(statType: string, json: string): number | undefined {
     const headers = getStatTypesHeaders(json);
-    const index = headers.findIndex((header) => header.toLowerCase === statType.toLowerCase);
+    const index = headers.findIndex((header) => header.toLowerCase() === statType.toLowerCase());
 
     return index;
 }
