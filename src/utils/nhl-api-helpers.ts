@@ -269,21 +269,43 @@ export async function searchLeagueForPlayer(name: string): Promise<any[]> {
  * @param playerID number corresponding to the desired player
  * @returns a Promise to the given player's information
  */
-export async function getPlayerInfo(playerID: number): Promise<any[]> {
+export async function getPlayerInfo(playerID: number): Promise<any> {
     try {
         const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}`)
         const data = await response.json();
 
-        const playerInfo = data.people;
+        const playerInfo = data.people[0];
 
         return playerInfo;
     } catch (error) {
         console.log("getPlayerInfo(): ", error);
-        return [];
+    }
+}
+
+/**
+ * Returns the abbreviation of the team the given player plays for.
+ * 
+ * @param playerID number representing the desired player
+ * @returns the abbreviation of the team the given player plays for
+ */
+export async function getTeamAbbrFromPlayer(playerID: number): Promise<any> {
+    try {
+        const playerInfo = await getPlayerInfo(playerID);
+        const teamID = await playerInfo.currentTeam?.id;
+
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}`);
+        const data = await response.json();
+
+        return data.teams[0].abbreviation;
+    } catch (error) {
+        console.log("getTeamAbbrFromPlayer(): ", error);
     }
 }
 
 // test queries
+
+// getTeamAbbrFromPlayer(8476981).then((info) => console.log(info)).catch((error) => console.log("Error"));
+// getPlayerInfo(8476981).then((info) => console.log(info)).catch((error) => console.log("Error"));
 
 // searchTeamForPlayer("J", 8).then((players) => console.log(players)).catch((error) => console.log("Error"));
 // searchLeagueForPlayer("Josh").then((players) => console.log(players)).catch((error) => console.log("Error"));
