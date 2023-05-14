@@ -253,8 +253,8 @@ export async function searchLeagueForPlayer(name: string): Promise<any[]> {
         
       // Extract the first element from each non-empty array
       const filteredPlayers = foundPlayers
-      .filter((players: any[]) => players.length > 0)
-      .map((players: any[]) => players[0]);
+        .filter((players: any[]) => players.length > 0)
+        .map((players: any[]) => players[0] || null);
   
       return filteredPlayers;
     } catch (error) {
