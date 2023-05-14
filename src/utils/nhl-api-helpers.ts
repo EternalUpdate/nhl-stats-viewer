@@ -208,6 +208,36 @@ export function getStatTypeIndex(statType: string, json: string): number | undef
     return index;
 }
 
+/**
+ * Searches a given team for a player and returns a Promise to an array of players that match the name.
+ * 
+ * @param name string representing the name of the desired player
+ * @param teamID number representing the ID of the team to search as present in the NHL API
+ * @returns a Promise to an array of players that match the name
+ */
+async function searchTeamForPlayer (name: string, teamID: number): Promise<any> {
+    try {
+      const response = await fetch(
+        `https://statsapi.web.nhl.com/api/v1/teams/${teamID}/roster`
+      );
+      const data = await response.json();
+  
+      // Extract the player data from the roster
+      const players = data.roster.map((player: any) => player.person);
+  
+      // Filter the players based on the name
+      const filteredPlayers = players.filter((player: any) =>
+        player.fullName.toLowerCase().includes(name.toLowerCase())
+      );
+  
+      return filteredPlayers;
+    } catch (error) {
+      console.log("Error searching players:", error);
+    }
+}
+
+searchTeamForPlayer("J", 8).then((players) => console.log(players)).catch((error) => console.log("Error"));
+
 // test queries
 // const requestOptions: RequestInit = {
 //     method: 'GET',
