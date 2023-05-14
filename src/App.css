@@ -6,7 +6,13 @@
   text-align: center;
 }
 
-@media only screen and (min-width: 2000px) {
+@media only screen and (min-width: 1300px) {
+  #root {
+    max-width: 80%;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
   #root {
     max-width: 60%;
   }
