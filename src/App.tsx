@@ -3,8 +3,11 @@ import PlayerStatLineChart from "./components/PlayerStatLineChart";
 import { Text, Heading, Box, Link } from "@chakra-ui/react";
 import { Section } from "./components/Section";
 import PlayerSearchComponent from "./components/PlayerSearchComponent";
-import { useState } from "react";
 import PlayerInfoComponent from "./components/PlayerInfoComponent";
+import { useState } from "react";
+
+// test
+// import "./utils/nhl-api-helpers";
 
 function App() {
     const [playerID, setPlayerID] = useState(8476981); // Default player ID
@@ -21,7 +24,7 @@ function App() {
             <PlayerSearchComponent onPlayerSearch={handlePlayerSearch} />
 
             <Heading size="lg" fontWeight="semibold" pt={{ base: "1" }}>
-                NHL Stat Viewer
+                NHL Stats Viewer
             </Heading>
             <Text fontSize="lg" color="gray.500">
                 See progress over time{" "}
@@ -114,7 +117,7 @@ function App() {
             <Section title="Clutch Factor">
                 <PlayerStatLineChart
                     playerID={playerID}
-                    statTypes={["gameWinningGoals", "overtimeGoals"]}
+                    statTypes={["gameWinningGoals", "overTimeGoals"]}
                     title="Game Winning and Overtime Goals"
                 />
             </Section>
@@ -135,7 +138,7 @@ function App() {
             <Section title="Face-offs">
                 <PlayerStatLineChart
                     playerID={playerID}
-                    statTypes={["faceoffPct"]}
+                    statTypes={["faceOffPct"]}
                     title="Face-Off Percentage"
                 />
             </Section>

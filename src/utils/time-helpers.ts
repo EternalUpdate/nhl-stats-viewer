@@ -35,22 +35,21 @@ export function numToMinuteSecond(totalSeconds: number) {
 
 /**
  * Adds two strings of the format "minutes:seconds" or "minutes" together.
- * Returns the total in seconds or as a string in the "minutes:seconds" format as specified.
+ * Returns the total in seconds or as a string in the "minutes:seconds" format.
  * 
  * @param timeString1 first string of the format "minutes:seconds" or "minutes"
  * @param timeString2 second string of the format "minutes:seconds" or "minutes"
- * @param formatted boolean specifying whether the function should return a formatted string or not
- * @returns the total in seconds or as a string in the "minutes:seconds" format as specified
+ * @returns the total in seconds or as a string in the "minutes:seconds" format
  */
-export function addMinuteSecond(timeString1: string, timeString2: string, formatted=true): number | string {
+export function addMinuteSecond(timeString1: string, timeString2: string): string {
+    if (!timeString1 || !timeString2) {
+        return "";
+    }
+    
     const totalSeconds1 = minuteSecondStringToNum(timeString1);
     const totalSeconds2 = minuteSecondStringToNum(timeString2);
 
     const summedSeconds = totalSeconds1 + totalSeconds2;
 
-    if (formatted) {
-        return numToMinuteSecond(summedSeconds);
-    } else {
-        return summedSeconds;
-    }
+    return numToMinuteSecond(summedSeconds);
 }
