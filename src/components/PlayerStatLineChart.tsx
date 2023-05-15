@@ -11,8 +11,9 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import {
-    getLabelsFromNHLYears,
-    getSingleStatOverTheYears,
+    getAllSeasonLabels,
+    getAllSeasonsPlayerStats,
+    getSingleStatOverTheSeasons,
 } from "../utils/nhl-api-helpers";
 import { Text, Box } from "@chakra-ui/react";
 import { minuteSecondStringToNum } from "../utils/time-helpers";
@@ -49,57 +50,53 @@ const SingleStatPlayerLineChart = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(
-                    `https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=yearByYear`
+                const allSeasonsStats = await getAllSeasonsPlayerStats(
+                    playerID
                 );
-                const result = await response.json();
-
-                // Extract the necessary data from the API response
-                const jsonString = JSON.stringify(result);
-                const chartLabels = getLabelsFromNHLYears(
-                    undefined,
-                    jsonString
-                );
+                const chartLabels = await getAllSeasonLabels(allSeasonsStats);
 
                 // Prepare datasets for each stat type
-                const datasets = statTypes.map((statType, index) => {
-                    let chartData = getSingleStatOverTheYears(
-                        jsonString,
-                        statType
-                    );
-                    if (statType.toLowerCase().includes("time")) {
-                        chartData = chartData.map((time) => {
-                            if (typeof time === "string") {
-                                return minuteSecondStringToNum(time);
-                            }
-                            return time;
-                        });
-                    }
+                const datasets = await Promise.all(
+                    statTypes.map(async (statType, index) => {
+                        let chartData = await getSingleStatOverTheSeasons(
+                            statType,
+                            allSeasonsStats
+                        );
 
-                    // Define an array of colors
-                    const colors = [
-                        "rgb(255, 99, 132)",
-                        "rgb(54, 162, 235)",
-                        "rgb(255, 205, 86)",
-                        // Add more colors as needed
-                    ];
+                        if (statType.toLowerCase().includes("time")) {
+                            chartData = chartData.map((time) => {
+                                if (typeof time === "string") {
+                                    return minuteSecondStringToNum(time);
+                                }
+                                return time;
+                            });
+                        }
 
-                    // Define an array of data point icons
-                    const pointStyles = [
-                        "circle",
-                        "triangle",
-                        "rect",
-                        // Add more point styles as needed
-                    ];
+                        // Define an array of colors
+                        const colors = [
+                            "rgb(255, 99, 132)",
+                            "rgb(54, 162, 235)",
+                            "rgb(255, 205, 86)",
+                            // Add more colors as needed
+                        ];
 
-                    return {
-                        label: statType,
-                        data: chartData,
-                        borderColor: colors[index % colors.length],
-                        backgroundColor: colors[index % colors.length],
-                        pointStyle: pointStyles[index % pointStyles.length],
-                    };
-                });
+                        // Define an array of data point icons
+                        const pointStyles = [
+                            "circle",
+                            "triangle",
+                            "rect",
+                            // Add more point styles as needed
+                        ];
+
+                        return {
+                            label: statType,
+                            data: chartData,
+                            borderColor: colors[index % colors.length],
+                            backgroundColor: colors[index % colors.length],
+                            pointStyle: pointStyles[index % pointStyles.length],
+                        };
+                    })
+                );
 
                 // Chart.js variables
                 setOptions({
