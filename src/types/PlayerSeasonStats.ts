@@ -4,6 +4,7 @@ import { addMinuteSecond } from "../utils/time-helpers";
  * Player season stats as returned by NHL API calls for yearByYear, singleSeason, and careerRegularSeason, among others.
  */
 export type PlayerSeasonStats = {
+  season: string;
   timeOnIce: string;
   assists: number;
   goals: number;
@@ -42,6 +43,7 @@ export type PlayerSeasonStats = {
  */
 export function addPlayerSeasonStats(stats1: PlayerSeasonStats, stats2: PlayerSeasonStats): PlayerSeasonStats {
   return {
+      season: stats1.season,
       timeOnIce: addMinuteSecond(stats1.timeOnIce, stats2.timeOnIce),
       assists: stats1.assists + stats2.assists,
       goals: stats1.goals + stats2.goals,
