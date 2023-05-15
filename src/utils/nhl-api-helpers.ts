@@ -140,9 +140,7 @@ export async function getSingleStatOverTheSeasons(statType: string, allSeasonsSt
     }
 
     if (allSeasonsStats) {
-        const statOverTime: (number | string)[] = allSeasonsStats?.map((seasonStats: PlayerSeasonStats) => {
-            return seasonStats[statType];
-        });
+        const statOverTime: (number | string)[] = allSeasonsStats.map((seasonStats: PlayerSeasonStats) => seasonStats[statType]);
         
         return statOverTime;
     }
@@ -151,65 +149,56 @@ export async function getSingleStatOverTheSeasons(statType: string, allSeasonsSt
 }
 
 /**
- * Returns an array of all the years the player has active stats in the NHL.
- * The array contains unique pairs of years [startYear, endYear].
+ * Gets all of the NHL seasons either present in the NHL API or all the active NHL seasons for a given player or a given PlayerSeasonStats array.
  * 
- * @param json the JSON string from the NHL API yearByYear call
- * @returns an array of all the years the player has active stats in the NHL
+ * @param allSeasonsStats optional PlayerSeasonStats array used to group the seasons
+ * @param playerID optional player ID to fetch all season stats if none were given
+ * @returns an array of strings containing the seasons in the format "yearStartyearEnd", "20222023"
  */
-export function getAllNHLYears(json: string): number[][] {
-    const years: number[][] = [];
-    const data = JSON.parse(json).stats[0].splits;
-    let lastYearStart = 0; // to check for duplicates (api data is sorted)
+export async function getAllNHLSeasons(allSeasonsStats?: PlayerSeasonStats[], playerID?: number): Promise<string[]> {
+    // no info specified -- get all seasons available in the NHL API
+    if (!allSeasonsStats && !playerID) {
+        try {
+            const response = await fetch(`https://statsapi.web.nhl.com/api/v1/seasons/`);
+            const data = await response.json();
+            const seasons = data.seasons;
 
-    for (const i in data) {
-        const league: string = data[i].league.name;
+            const allSeasonYears: string[] = seasons.map((season: any) => season.seasonId);
 
-        if (league == "National Hockey League") {
-            const yearString: string = data[i].season;
-            const yearPair: number[] = [];
+            console.log(allSeasonYears);
+            
 
-            // parse string into number pair
-            const yearStart: number = parseInt(yearString.substring(0, 4));
-            const yearEnd: number = parseInt(yearString.substring(4));
-
-            // add only if not duplicate
-            if (yearStart !== lastYearStart) {                
-                yearPair.push(yearStart);
-                yearPair.push(yearEnd);
-    
-                years.push(yearPair);
-
-                lastYearStart = yearStart; // update for next duplicate check
-            }
+            return allSeasonYears;
+        } catch (error) {
+            console.log("getAllNHLSeasons(): ", error);
+            return [];
         }
     }
 
-    return years;
+    // get all seasons data as necessary if a specific player is given
+    if (!allSeasonsStats && playerID) {
+        try {
+            allSeasonsStats = await getAllSeasonsPlayerStats(playerID);
+        } catch (error) {
+            console.log("getAllNHLSeasons(): ", error);
+            return [];
+        }
+    }
+
+    // group the seasons together
+    if (allSeasonsStats) {
+        const allSeasonYears: string[] = allSeasonsStats.map((seasonStats: PlayerSeasonStats) => seasonStats.season);
+
+        console.log(allSeasonYears);
+        
+        return allSeasonYears;
+    }
+
+    return [];
 }
 
-/**
- * Creates labels in the format startYear-endYear from the player's active NHL seasons.
- * 
- * @param yearPairs (optional) a 2D array containing pairs of years
- * @param json (optional) the JSON string from a yearByYear NHL API call to generate the year pairs from
- * @returns labels in the format startYear-endYear
- */
-export function getLabelsFromNHLYears(yearPairs?: number[][], json?: string): string[] {
-    const labels: string[] = [];
-
-    if (json) {
-        yearPairs = getAllNHLYears(json);
-    }
-
-    if (yearPairs) {
-        for (const pair of yearPairs) {
-            const label = `${pair[0]}-${pair[1]}`
-            labels.push(label);
-        }
-    }
-
-    return labels;
+export async function getLabelsFromNHLYears() {
+    //
 }
 
 /**
