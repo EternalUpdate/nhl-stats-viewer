@@ -32,6 +32,7 @@ export type PlayerSeasonStats = {
   evenTimeOnIcePerGame: string;
   shortHandedTimeOnIcePerGame: string;
   powerPlayTimeOnIcePerGame: string;
+  [key: string]: any;
 };
 
 /**
