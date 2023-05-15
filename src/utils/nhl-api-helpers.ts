@@ -311,7 +311,7 @@ export async function getAllTeamIDs(): Promise<number[]> {
         const data = await response.json();
 
         const teamIDs = data.teams.map((team: any) => team.id);
-
+        
         return teamIDs;
     } catch (error) {
         console.log("getAllTeamIDs(): ", error); 
@@ -322,18 +322,20 @@ export async function getAllTeamIDs(): Promise<number[]> {
 /**
  * Returns a Promise to an array containing all player IDs in the league availbale in the NHL API.
  */
-export async function getAllPlayerIDs(): Promise<any[]> {
+export async function getAllPlayerIDs(): Promise<number[]> {
     try {
         const playerIDs: number[] = [];
         const teamIDs = await getAllTeamIDs();
-        teamIDs.map( async (teamID: number) => {
+        await Promise.all(
+            teamIDs.map(async (teamID: number) => {
             const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}/roster`);
             const data = await response.json();
-            const roster = data.roster;
+            const roster = data.roster;            
             
-            roster.map((playerData: any) => playerIDs.push(playerData.person.id));
-        })
-
+            roster.forEach((playerData: any) => playerIDs.push(playerData.person.id));
+            })
+        )
+        
         return playerIDs;
     } catch (error) {
         console.log("getAllPlayerIDs(): ", error);
@@ -342,6 +344,8 @@ export async function getAllPlayerIDs(): Promise<any[]> {
 }
 
 // test queries
+
+// getAllPlayerIDs().then((ids) => console.log(ids)).catch((error) => console.log(error));
 
 // getTeamAbbrFromPlayer(8476981).then((info) => console.log(info)).catch((error) => console.log("Error"));
 // getPlayerInfo(8476981).then((info) => console.log(info)).catch((error) => console.log("Error"));
