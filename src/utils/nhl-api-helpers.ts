@@ -188,8 +188,6 @@ export async function getAllNHLSeasons(allSeasonsStats?: PlayerSeasonStats[], pl
     // group the seasons together
     if (allSeasonsStats) {
         const allSeasonYears: string[] = allSeasonsStats.map((seasonStats: PlayerSeasonStats) => seasonStats.season);
-
-        console.log(allSeasonYears);
         
         return allSeasonYears;
     }
@@ -197,8 +195,37 @@ export async function getAllNHLSeasons(allSeasonsStats?: PlayerSeasonStats[], pl
     return [];
 }
 
-export async function getLabelsFromNHLYears() {
-    //
+/**
+ * Creates labels for every active NHL season the player played in.
+ * 
+ * @param allSeasonsStats optional PlayerSeasonStats array used to group the seasons
+ * @param playerID optional player ID to fetch all season stats if none were given
+ * @returns an array of strings representing season labels in the format "yearStart-yearEnd", "2022-2023"
+ */
+export async function getAllSeasonLabels(allSeasonsStats?: PlayerSeasonStats[], playerID?: number): Promise<string[]> {
+    // get all seasons data as necessary if a specific player is given
+    if (!allSeasonsStats && playerID) {
+        try {
+            allSeasonsStats = await getAllSeasonsPlayerStats(playerID);
+        } catch (error) {
+            console.log("getAllNHLSeasons(): ", error);
+            return [];
+        }
+    }
+
+    if (allSeasonsStats) {
+        const allSeasonYears = await getAllNHLSeasons(allSeasonsStats);
+        const formattedYears = allSeasonYears.map((season: string) => {
+            const yearStart = parseInt(season.substring(0, 4));
+            const yearEnd = parseInt(season.substring(4));
+
+            return `${yearStart}-${yearEnd}`;
+        })
+        
+        return formattedYears;
+    }
+
+    return [];
 }
 
 /**
