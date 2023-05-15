@@ -140,7 +140,10 @@ export async function getSingleStatOverTheSeasons(statType: string, allSeasonsSt
     }
 
     if (allSeasonsStats) {
-        const statOverTime: (number | string)[] = allSeasonsStats.map((seasonStats: PlayerSeasonStats) => seasonStats[statType]);
+        const statOverTime: (number | string)[] = allSeasonsStats.map((seasonStats: PlayerSeasonStats) => {
+            const value = seasonStats[statType];
+            return value !== undefined ? value : 0; // Handle undefined values
+        });
         
         return statOverTime;
     }
