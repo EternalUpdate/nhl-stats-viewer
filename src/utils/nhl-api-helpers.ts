@@ -302,6 +302,45 @@ export async function getTeamAbbrFromPlayer(playerID: number): Promise<any> {
     }
 }
 
+/**
+ * Returns a Promise to an array containing all team IDs in the league available in the NHL API.
+ */
+export async function getAllTeamIDs(): Promise<number[]> {
+    try {
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/`);
+        const data = await response.json();
+
+        const teamIDs = data.teams.map((team: any) => team.id);
+
+        return teamIDs;
+    } catch (error) {
+        console.log("getAllTeamIDs(): ", error); 
+        return [];
+    }
+}
+
+/**
+ * Returns a Promise to an array containing all player IDs in the league availbale in the NHL API.
+ */
+export async function getAllPlayerIDs(): Promise<any[]> {
+    try {
+        const playerIDs: number[] = [];
+        const teamIDs = await getAllTeamIDs();
+        teamIDs.map( async (teamID: number) => {
+            const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}/roster`);
+            const data = await response.json();
+            const roster = data.roster;
+            
+            roster.map((playerData: any) => playerIDs.push(playerData.person.id));
+        })
+
+        return playerIDs;
+    } catch (error) {
+        console.log("getAllPlayerIDs(): ", error);
+        return [];
+    }
+}
+
 // test queries
 
 // getTeamAbbrFromPlayer(8476981).then((info) => console.log(info)).catch((error) => console.log("Error"));
