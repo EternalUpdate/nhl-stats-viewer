@@ -122,6 +122,35 @@ export async function getAllSeasonsPlayerStats(playerID: number): Promise<Player
 }
 
 /**
+ * Get the progression of a specific stat over all of the player's active NHL seasons.
+ * 
+ * @param statType string representing the type of statistic as stored in PlayerSeasonStats objects
+ * @param allSeasonsStats optional array of PlayerSeasonStats to gather the stat from over the seasons
+ * @param playerID optional number player ID to fetch the season stats if none are provided
+ * @returns an array containing the value of the stat for each season
+ */
+export async function getSingleStatOverTheSeasons(statType: string, allSeasonsStats?: PlayerSeasonStats[], playerID?: number): Promise<(number | string)[]> {
+    if (!allSeasonsStats && playerID) {
+        try {
+            allSeasonsStats = await getAllSeasonsPlayerStats(playerID);
+        } catch (error) {
+            console.log("getSingleStatOverTheSeasons(): ", error);
+            return [];
+        }
+    }
+
+    if (allSeasonsStats) {
+        const statOverTime: (number | string)[] = allSeasonsStats?.map((seasonStats: PlayerSeasonStats) => {
+            return seasonStats[statType];
+        });
+        
+        return statOverTime;
+    }
+
+    return [];
+}
+
+/**
  * Returns an array of all the years the player has active stats in the NHL.
  * The array contains unique pairs of years [startYear, endYear].
  * 
