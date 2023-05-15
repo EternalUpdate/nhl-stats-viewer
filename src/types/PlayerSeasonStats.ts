@@ -27,7 +27,7 @@ export type PlayerSeasonStats = {
   plusMinus: number;
   points: number;
   shifts: number;
-  timeOnIcePerGame: string;
+  timeOnIcePerGame: string; // these last four are only included in the career totals endpoints
   evenTimeOnIcePerGame: string;
   shortHandedTimeOnIcePerGame: string;
   powerPlayTimeOnIcePerGame: string;
