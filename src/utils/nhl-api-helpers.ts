@@ -1,6 +1,58 @@
 import { transpose, addPlayerStatsRows } from "./matrix-manip";
+import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
 
 // functions for use in charts (progress over time)
+// TODO: consider converting the first few functions into async functions that take the playerID
+
+/**
+ * Gets player stats for the given season.
+ * 
+ * @param playerID number reprenting the playerID
+ * @param season string representing the desired season in the format "yearStartyearEnd", "20222023"
+ * @returns a PlayerSeasonStats object containing the player's stats for the specified season
+ */
+async function getSeasonPlayerStats(playerID: number, season: "string"): Promise<PlayerSeasonStats | null> {
+    try {
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeason&season=${season}`);
+        const data = await response.json();
+        const stats = data.stats[0].splits[0].stat;
+
+        const playerStats: PlayerSeasonStats = {
+            timeOnIce: stats.timeOnIce,
+            assists: stats.assists,
+            goals: stats.goals,
+            pim: stats.pim,
+            shots: stats.shots,
+            games: stats.games,
+            hits: stats.hits,
+            powerPlayGoals: stats.powerPlayGoals,
+            powerPlayPoints: stats.powerPlayPoints,
+            powerPlayTimeOnIce: stats.powerPlayPoints,
+            evenTimeOnIce: stats.evenTimeOnIce,
+            penaltyMinutes: stats.penaltyMinutes,
+            faceOffPct: stats.faceOffPct,
+            shotPct: stats.shotPct,
+            gameWinningGoals: stats.gameWinningGoals,
+            overTimeGoals: stats.overTimeGoals,
+            shortHandedGoals: stats.shortHandedGoals,
+            shortHandedPoints: stats.shortHandedPoints,
+            shortHandedTimeOnIce: stats.shortHandedTimeOnIce,
+            blocked: stats.blocked,
+            plusMinus: stats.plusMinus,
+            points: stats.points,
+            shifts: stats.shifts,
+            timeOnIcePerGame: stats.timeOnIcePerGame,
+            evenTimeOnIcePerGame: stats.evenTimeOnIcePerGame,
+            shortHandedTimeOnIcePerGame: stats.shortHandedTimeOnIcePerGame,
+            powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
+        }
+
+        return playerStats;
+    } catch (error) {
+        console.log("getSeasonPlayerStats(): ", error);
+        return null;
+    }
+}
 
 /**
  * Returns an array of all the years the player has active stats in the NHL.
@@ -63,35 +115,6 @@ export function getLabelsFromNHLYears(yearPairs?: number[][], json?: string): st
 
     return labels;
 }
-
-/**
- * Mapping individual stats types to their index numbers.
- */
-export const IndividualStatsTypes = {
-    timeOnIce: 0, // string
-    assists: 1,
-    goals: 2,
-    pim: 3,
-    shots: 4,
-    games: 5,
-    hits: 6,
-    powerPlayGoals: 7,
-    powerPlayPoints: 8,
-    powerPlayTimeOnIce: 9, // string
-    evenTimeOnIce: 10,
-    penaltyMinutes: 11, // string
-    faceOffPct: 12,
-    shotPct: 13,
-    gameWinningGoals: 14,
-    overTimeGoals: 15,
-    shortHandedGoals: 16,
-    shortHandedPoints: 17,
-    shortHandedTimeOnIce: 18, // string
-    blocked: 19,
-    plusMinus: 20,
-    points: 21,
-    shifts: 22,
-} as const;
 
 /**
  * Returns an array containing the NHL stats of the queried player with the
@@ -326,6 +349,8 @@ export async function getAllPlayerIDs(): Promise<number[]> {
     try {
         const playerIDs: number[] = [];
         const teamIDs = await getAllTeamIDs();
+
+        // wait for all async requests to complete before moving on
         await Promise.all(
             teamIDs.map(async (teamID: number) => {
             const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}/roster`);
@@ -343,7 +368,22 @@ export async function getAllPlayerIDs(): Promise<number[]> {
     }
 }
 
+export async function getPlayerCareerAverages(playerID: number): Promise<(number | string)[]> {
+    try {
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=careerRegularSeason`);
+        const data = await response.json();
+        const careerTotals = data.stats[0].splits[0].stat;        
+
+        return careerTotals;
+    } catch (error) {
+        console.log("getPlayerCareerAverages(): ", error);
+        return [];
+    }
+}
+
 // test queries
+
+getPlayerCareerAverages(8476981);
 
 // getAllPlayerIDs().then((ids) => console.log(ids)).catch((error) => console.log(error));
 
