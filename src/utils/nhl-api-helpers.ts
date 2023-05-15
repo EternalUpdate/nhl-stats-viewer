@@ -1,8 +1,5 @@
 import { transpose, addPlayerStatsRows } from "./matrix-manip";
-import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
-
-// functions for use in charts (progress over time)
-// TODO: consider converting the first few functions into async functions that take the playerID
+import { PlayerSeasonStats, addPlayerSeasonStats } from "../types/PlayerSeasonStats";
 
 /**
  * Gets player stats for the given season.
@@ -11,13 +8,14 @@ import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
  * @param season string representing the desired season in the format "yearStartyearEnd", "20222023"
  * @returns a PlayerSeasonStats object containing the player's stats for the specified season
  */
-async function getSeasonPlayerStats(playerID: number, season: string): Promise<PlayerSeasonStats | null> {
+export async function getSeasonPlayerStats(playerID: number, season: string): Promise<PlayerSeasonStats | null> {
     try {
         const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeason&season=${season}`);
         const data = await response.json();
         const stats = data.stats[0].splits[0].stat;
 
         const playerStats: PlayerSeasonStats = {
+            season: data.stats[0].splits[0].season,
             timeOnIce: stats.timeOnIce,
             assists: stats.assists,
             goals: stats.goals,
@@ -46,13 +44,80 @@ async function getSeasonPlayerStats(playerID: number, season: string): Promise<P
             shortHandedTimeOnIcePerGame: stats.shortHandedTimeOnIcePerGame,
             powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
         }
-
-        console.log(playerStats);
         
         return playerStats;
     } catch (error) {
         console.log("getSeasonPlayerStats(): ", error);
         return null;
+    }
+}
+
+/**
+ * Get player stats for every active NHL season that the player played.
+ * 
+ * @param playerID number representing the player ID of the desired player
+ * @returns an array container a PlayerSeasonStats object for each of the seasons
+ */
+export async function getAllSeasonsPlayerStats(playerID: number): Promise<PlayerSeasonStats[]> {
+    try {
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=yearByYear`);
+        const data = await response.json();
+        const allSeasons = data.stats[0].splits;
+        let lastYear = "";
+        const allSeasonsPlayerStats: PlayerSeasonStats[] = [];
+
+        for (const season of allSeasons) {
+            if (season.league.name === "National Hockey League") {
+                const stats = season.stat;                
+                const currentPlayerSeasonStats: PlayerSeasonStats = {
+                    season: season.season,
+                    timeOnIce: stats.timeOnIce,
+                    assists: stats.assists,
+                    goals: stats.goals,
+                    pim: stats.pim,
+                    shots: stats.shots,
+                    games: stats.games,
+                    hits: stats.hits,
+                    powerPlayGoals: stats.powerPlayGoals,
+                    powerPlayPoints: stats.powerPlayPoints,
+                    powerPlayTimeOnIce: stats.powerPlayPoints,
+                    evenTimeOnIce: stats.evenTimeOnIce,
+                    penaltyMinutes: stats.penaltyMinutes,
+                    faceOffPct: stats.faceOffPct,
+                    shotPct: stats.shotPct,
+                    gameWinningGoals: stats.gameWinningGoals,
+                    overTimeGoals: stats.overTimeGoals,
+                    shortHandedGoals: stats.shortHandedGoals,
+                    shortHandedPoints: stats.shortHandedPoints,
+                    shortHandedTimeOnIce: stats.shortHandedTimeOnIce,
+                    blocked: stats.blocked,
+                    plusMinus: stats.plusMinus,
+                    points: stats.points,
+                    shifts: stats.shifts,
+                    timeOnIcePerGame: stats.timeOnIcePerGame,
+                    evenTimeOnIcePerGame: stats.evenTimeOnIcePerGame,
+                    shortHandedTimeOnIcePerGame: stats.shortHandedTimeOnIcePerGame,
+                    powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
+                }
+
+                if (lastYear === season.season) {
+                    // get previous row
+                    const previousPlayerSeasonStats = allSeasonsPlayerStats[allSeasonsPlayerStats.length-1];
+                    // add to current row and update
+                    allSeasonsPlayerStats[allSeasonsPlayerStats.length-1] = addPlayerSeasonStats(previousPlayerSeasonStats, currentPlayerSeasonStats);
+                } else {
+                    // add stats directly to final array
+                    allSeasonsPlayerStats.push(currentPlayerSeasonStats);
+                }
+
+                lastYear = season.season;
+            }
+        }        
+        
+        return allSeasonsPlayerStats;
+    } catch (error) {
+        console.log("getAllSeasonsPlayerStats: ", error);
+        return [];
     }
 }
 
