@@ -42,6 +42,10 @@ export function numToMinuteSecond(totalSeconds: number) {
  * @returns the total in seconds or as a string in the "minutes:seconds" format
  */
 export function addMinuteSecond(timeString1: string, timeString2: string): string {
+    if (!timeString1 || !timeString2) {
+        return "";
+    }
+    
     const totalSeconds1 = minuteSecondStringToNum(timeString1);
     const totalSeconds2 = minuteSecondStringToNum(timeString2);
 
