@@ -11,7 +11,7 @@ import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
  * @param season string representing the desired season in the format "yearStartyearEnd", "20222023"
  * @returns a PlayerSeasonStats object containing the player's stats for the specified season
  */
-async function getSeasonPlayerStats(playerID: number, season: "string"): Promise<PlayerSeasonStats | null> {
+async function getSeasonPlayerStats(playerID: number, season: string): Promise<PlayerSeasonStats | null> {
     try {
         const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeason&season=${season}`);
         const data = await response.json();
@@ -47,6 +47,8 @@ async function getSeasonPlayerStats(playerID: number, season: "string"): Promise
             powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
         }
 
+        console.log(playerStats);
+        
         return playerStats;
     } catch (error) {
         console.log("getSeasonPlayerStats(): ", error);
