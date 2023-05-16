@@ -335,6 +335,7 @@ export async function getPlayerInfo(playerID: number): Promise<PlayerInfo | null
         const data = await response.json();
 
         const player = data.people[0];
+        const teamAbbr = await getTeamAbbrFromTeam(player.currentTeam.id);
         const playerInfo: PlayerInfo = {
             id: player.id,
             fullName: player.fullName,
@@ -358,6 +359,7 @@ export async function getPlayerInfo(playerID: number): Promise<PlayerInfo | null
             currentTeam: {
               id: player.currentTeam.id,
               name: player.currentTeam.name,
+              abbreviation: teamAbbr,
             },
             primaryPosition: {
               code: player.primaryPosition.code,
@@ -380,19 +382,39 @@ export async function getPlayerInfo(playerID: number): Promise<PlayerInfo | null
  * @param playerID number representing the desired player
  * @returns the abbreviation of the team the given player plays for
  */
-export async function getTeamAbbrFromPlayer(playerID: number): Promise<any> {
+export async function getTeamAbbrFromTeam(teamID: number): Promise<string> {
+    try {
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}`);
+        const data = await response.json();
+
+        return data.teams[0].abbreviation;
+    } catch (error) {
+        console.log("getTeamAbbrFromPlayer(): ", error);
+        return "";
+    }
+}
+
+/**
+ * Returns the abbreviation of the team the given player plays for.
+ * 
+ * @param playerID number representing the desired player
+ * @returns the abbreviation of the team the given player plays for
+ */
+export async function getTeamAbbrFromPlayer(playerID: number): Promise<string> {
     try {
         const playerInfo = await getPlayerInfo(playerID);
         if (playerInfo) {
-            const teamID = await playerInfo.currentTeam?.id;
+            const teamID = await playerInfo.currentTeam.id;
             const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}`);
             const data = await response.json();
 
             return data.teams[0].abbreviation;
         }
-        
+
+        return "";
     } catch (error) {
         console.log("getTeamAbbrFromPlayer(): ", error);
+        return "";
     }
 }
 
