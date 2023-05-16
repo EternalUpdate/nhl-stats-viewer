@@ -6,7 +6,7 @@ export type PlayerInfo = {
     fullName: string;
     firstName: string;
     lastName: string;
-    primaryNumber: string;
+    primaryNumber: number;
     birthDate: string;
     currentAge: number;
     birthCity: string;
@@ -24,6 +24,7 @@ export type PlayerInfo = {
     currentTeam: {
       id: number;
       name: string;
+      abbreviation: string;
     };
     primaryPosition: {
       code: string;
