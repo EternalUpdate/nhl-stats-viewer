@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.11.0",
     "@types/chart.js": "^2.9.37",
     "chart.js": "^4.3.0",
+    "downshift": "^7.6.0",
     "framer-motion": "^10.12.10",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
