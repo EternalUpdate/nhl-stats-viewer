@@ -5,11 +5,19 @@ import { PlayerSeasonStats, addPlayerSeasonStats } from "../types/PlayerSeasonSt
  * 
  * @param playerID number reprenting the playerID
  * @param season string representing the desired season in the format "yearStartyearEnd", "20222023"
+ * @param playoffs boolean true if playoff stats should be fetched for the given season
  * @returns a PlayerSeasonStats object containing the player's stats for the specified season
  */
-export async function getSeasonPlayerStats(playerID: number, season: string): Promise<PlayerSeasonStats | null> {
+export async function getSeasonPlayerStats(playerID: number, season: string, playoffs=false): Promise<PlayerSeasonStats | null> {
     try {
-        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeason&season=${season}`);
+        let response;
+
+        if (playoffs) {
+            response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeasonPlayoffs&season=${season}`);
+        } else {
+            response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=statsSingleSeason&season=${season}`);
+        }
+        
         const data = await response.json();
         const stats = data.stats[0].splits[0].stat;
 
@@ -43,6 +51,9 @@ export async function getSeasonPlayerStats(playerID: number, season: string): Pr
             shortHandedTimeOnIcePerGame: stats.shortHandedTimeOnIcePerGame,
             powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
         }
+
+        console.log(playerStats);
+        
         
         return playerStats;
     } catch (error) {
@@ -367,22 +378,8 @@ export async function getAllPlayerIDs(): Promise<number[]> {
     }
 }
 
-export async function getPlayerCareerAverages(playerID: number): Promise<(number | string)[]> {
-    try {
-        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=careerRegularSeason`);
-        const data = await response.json();
-        const careerTotals = data.stats[0].splits[0].stat;        
-
-        return careerTotals;
-    } catch (error) {
-        console.log("getPlayerCareerAverages(): ", error);
-        return [];
-    }
-}
 
 // test queries
-
-getPlayerCareerAverages(8476981);
 
 // getAllPlayerIDs().then((ids) => console.log(ids)).catch((error) => console.log(error));
 
