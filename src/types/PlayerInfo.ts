@@ -1,7 +1,7 @@
 /**
  * Player information as presented in the people endpoint in the NHL API.
  */
-export type Player = {
+export type PlayerInfo = {
     id: number;
     fullName: string;
     firstName: string;
