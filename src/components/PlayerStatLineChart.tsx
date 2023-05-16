@@ -18,6 +18,7 @@ import {
 import { Text, Box } from "@chakra-ui/react";
 import { minuteSecondStringToNum } from "../utils/time-helpers";
 import { numToMinuteSecond } from "../utils/time-helpers";
+import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
 
 // Register the necessary scales and elements
 ChartJS.register(
@@ -34,12 +35,14 @@ interface PlayerStatLineChartProps {
     playerID: number;
     statTypes: string[];
     title?: string;
+    playoffs?: boolean;
 }
 
 const SingleStatPlayerLineChart = ({
     playerID,
     statTypes,
     title,
+    playoffs,
 }: PlayerStatLineChartProps) => {
     const [options, setOptions] = useState<object>({});
     const [data, setData] = useState<any>({
@@ -50,9 +53,17 @@ const SingleStatPlayerLineChart = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const allSeasonsStats = await getAllSeasonsPlayerStats(
-                    playerID
-                );
+                let allSeasonsStats: PlayerSeasonStats[];
+
+                if (playoffs) {
+                    allSeasonsStats = await getAllSeasonsPlayerStats(
+                        playerID,
+                        true
+                    );
+                } else {
+                    allSeasonsStats = await getAllSeasonsPlayerStats(playerID);
+                }
+
                 const chartLabels = await getAllSeasonLabels(allSeasonsStats);
 
                 // Prepare datasets for each stat type
