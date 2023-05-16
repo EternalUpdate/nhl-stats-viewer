@@ -1,6 +1,15 @@
 import "./App.css";
 import PlayerStatLineChart from "./components/PlayerStatLineChart";
-import { Text, Heading, Box, Link } from "@chakra-ui/react";
+import {
+    Text,
+    Heading,
+    Box,
+    Link,
+    Switch,
+    VStack,
+    FormControl,
+    FormLabel,
+} from "@chakra-ui/react";
 import { Section } from "./components/Section";
 import PlayerSearchComponent from "./components/PlayerSearchComponent";
 import PlayerInfoComponent from "./components/PlayerInfoComponent";
@@ -31,7 +40,22 @@ function App() {
                 See progress over time{" "}
             </Text>
 
-            <PlayerInfoComponent playerID={playerID}></PlayerInfoComponent>
+            <VStack
+                spacing={{ base: "8", md: "20" }}
+                mb={{ base: "0", md: "-8" }}
+            >
+                <PlayerInfoComponent playerID={playerID}></PlayerInfoComponent>
+                <FormControl
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    <Switch id="email-alerts" />
+                    <FormLabel htmlFor="playoffs-toggle" mb="0" ml="2">
+                        Playoffs
+                    </FormLabel>
+                </FormControl>
+            </VStack>
 
             <Section title="Production">
                 <PlayerStatLineChart
