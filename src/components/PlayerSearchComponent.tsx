@@ -1,6 +1,7 @@
-import { Input, Button } from "@chakra-ui/react";
+import { Input, FormControl, HStack, IconButton } from "@chakra-ui/react";
 import { useState } from "react";
 import { searchLeagueForPlayer } from "../utils/nhl-api-helpers";
+import { Search2Icon } from "@chakra-ui/icons";
 
 const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
     const [searchText, setSearchText] = useState("");
@@ -25,15 +26,22 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Input
-                type="text"
-                value={searchText}
-                onChange={handleInputChange}
-                placeholder="Enter player name"
-                w="30%"
-                mb="14"
-            />
-            <Button type="submit">Search</Button>
+            <FormControl mb="14">
+                <HStack justifyContent="center">
+                    <Input
+                        type="text"
+                        value={searchText}
+                        onChange={handleInputChange}
+                        placeholder="Enter player name"
+                        w={{ base: "64", md: "30%" }}
+                    />
+                    <IconButton
+                        aria-label="search"
+                        icon={<Search2Icon />}
+                        type="submit"
+                    ></IconButton>
+                </HStack>
+            </FormControl>
         </form>
     );
 };
