@@ -1,48 +1,63 @@
-import { Input, FormControl, HStack, IconButton } from "@chakra-ui/react";
+import {
+    Input,
+    FormControl,
+    HStack,
+    IconButton,
+    Box,
+    Text,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { searchLeagueForPlayer } from "../utils/nhl-api-helpers";
 import { Search2Icon } from "@chakra-ui/icons";
 
 const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
-    const [searchText, setSearchText] = useState("");
+    const [searchText, setSearchText] = useState<string>("");
+    const [foundPlayers, setFoundPlayers] = useState<any[]>([]);
 
-    const handleInputChange = (event: any) => {
-        setSearchText(event.target.value);
+    const handleInputChange = async (event: any) => {
+        const inputValue = event.target.value;
+        setSearchText(inputValue);
+        const players = await searchLeagueForPlayer(inputValue);
+        setFoundPlayers(players);
     };
 
-    const handleSubmit = async (event: any) => {
-        event.preventDefault(); // Prevent form submission refresh
-        const foundPlayers = await searchLeagueForPlayer(searchText);
-        const firstPlayerID = foundPlayers[0]?.id; // Get the ID of the first player
-
-        if (firstPlayerID) {
-            onPlayerSearch(firstPlayerID);
-        } else {
-            console.log(
-                "PlayerSearchComponent — handleSubmit(): no player found"
-            );
-        }
+    const handlePlayerSelect = (playerID: number) => {
+        onPlayerSearch(playerID);
+        setSearchText("");
+        setFoundPlayers([]);
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <FormControl mb="14">
-                <HStack justifyContent="center">
-                    <Input
-                        type="text"
-                        value={searchText}
-                        onChange={handleInputChange}
-                        placeholder="Enter player name"
-                        w={{ base: "64", md: "30%" }}
-                    />
-                    <IconButton
-                        aria-label="search"
-                        icon={<Search2Icon />}
-                        type="submit"
-                    ></IconButton>
-                </HStack>
-            </FormControl>
-        </form>
+        <FormControl mb="14">
+            <HStack justifyContent="center">
+                <Input
+                    type="text"
+                    value={searchText}
+                    onChange={handleInputChange}
+                    placeholder="Enter player name"
+                    w={{ base: "64", md: "30%" }}
+                />
+                <IconButton
+                    aria-label="search"
+                    icon={<Search2Icon />}
+                    type="submit"
+                ></IconButton>
+            </HStack>
+            {foundPlayers.length > 0 && (
+                <Box mt="2" p="2" borderWidth="1px" borderRadius="md">
+                    {foundPlayers.map((player) => (
+                        <Text
+                            key={player.id}
+                            onClick={() => handlePlayerSelect(player.id)}
+                            cursor="pointer"
+                        >
+                            {player.fullName} - #{player.primaryNumber}{" "}
+                            {player.currentTeam.abbreviation}
+                        </Text>
+                    ))}
+                </Box>
+            )}
+        </FormControl>
     );
 };
 
