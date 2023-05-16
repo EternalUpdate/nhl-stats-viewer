@@ -63,6 +63,7 @@ export async function getSeasonPlayerStats(playerID: number, season: string, pla
  * Get player stats for every active NHL season that the player played.
  * 
  * @param playerID number representing the player ID of the desired player
+ * @param playoffs boolean true if playoff stats should be fetched for the given player
  * @returns an array container a PlayerSeasonStats object for each of the seasons
  */
 export async function getAllSeasonsPlayerStats(playerID: number, playoffs=false): Promise<PlayerSeasonStats[]> {
@@ -141,23 +142,28 @@ export async function getAllSeasonsPlayerStats(playerID: number, playoffs=false)
  * @param statType string representing the type of statistic as stored in PlayerSeasonStats objects
  * @param allSeasonsStats optional array of PlayerSeasonStats to gather the stat from over the seasons
  * @param playerID optional number player ID to fetch the season stats if none are provided
+ * @param playoffs boolean true if no stats are given and playoff stats should be fetched
  * @returns an array containing the value of the stat for each season
  */
-export async function getSingleStatOverTheSeasons(statType: string, allSeasonsStats?: PlayerSeasonStats[], playerID?: number): Promise<(number | string)[]> {
+export async function getSingleStatOverTheSeasons(statType: string, allSeasonsStats?: PlayerSeasonStats[], playerID?: number, playoffs=false): Promise<(number | string)[]> {
     if (!allSeasonsStats && playerID) {
         try {
-            allSeasonsStats = await getAllSeasonsPlayerStats(playerID);
+            if (playoffs) {
+                allSeasonsStats = await getAllSeasonsPlayerStats(playerID, true);                    
+            } else {
+                allSeasonsStats = await getAllSeasonsPlayerStats(playerID);                
+            }
         } catch (error) {
             console.log("getSingleStatOverTheSeasons(): ", error);
             return [];
         }
-    }
+    }    
 
     if (allSeasonsStats) {
         const statOverTime: (number | string)[] = allSeasonsStats.map((seasonStats: PlayerSeasonStats) => {
             const value = seasonStats[statType];
             return value !== undefined ? value : 0; // Handle undefined values
-        });
+        });        
         
         return statOverTime;
     }
