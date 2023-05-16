@@ -50,10 +50,7 @@ export async function getSeasonPlayerStats(playerID: number, season: string, pla
             evenTimeOnIcePerGame: stats.evenTimeOnIcePerGame,
             shortHandedTimeOnIcePerGame: stats.shortHandedTimeOnIcePerGame,
             powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
-        }
-
-        console.log(playerStats);
-        
+        }        
         
         return playerStats;
     } catch (error) {
@@ -68,9 +65,16 @@ export async function getSeasonPlayerStats(playerID: number, season: string, pla
  * @param playerID number representing the player ID of the desired player
  * @returns an array container a PlayerSeasonStats object for each of the seasons
  */
-export async function getAllSeasonsPlayerStats(playerID: number): Promise<PlayerSeasonStats[]> {
+export async function getAllSeasonsPlayerStats(playerID: number, playoffs=false): Promise<PlayerSeasonStats[]> {
     try {
-        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=yearByYear`);
+        let response;
+
+        if (playoffs) {
+            response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=yearByYearPlayoffs`);
+        } else {
+            response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=yearByYear`);
+        }
+
         const data = await response.json();
         const allSeasons = data.stats[0].splits;
         let lastYear = "";
@@ -122,7 +126,7 @@ export async function getAllSeasonsPlayerStats(playerID: number): Promise<Player
 
                 lastYear = season.season;
             }
-        }        
+        }                
         
         return allSeasonsPlayerStats;
     } catch (error) {
