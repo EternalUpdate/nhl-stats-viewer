@@ -29,6 +29,14 @@ function App() {
         }
     };
 
+    const handlePlayoffsToggle = () => {
+        if (playoffs) {
+            setPlayoffs(false);
+        } else {
+            setPlayoffs(true);
+        }
+    };
+
     return (
         <>
             <PlayerSearchComponent onPlayerSearch={handlePlayerSearch} />
@@ -50,8 +58,11 @@ function App() {
                     alignItems="center"
                     justifyContent="center"
                 >
-                    <Switch id="email-alerts" />
-                    <FormLabel htmlFor="playoffs-toggle" mb="0" ml="2">
+                    <Switch
+                        id="playoffs-toggle"
+                        onChange={handlePlayoffsToggle}
+                    />
+                    <FormLabel htmlFor="playoffs-toggle-label" mb="0" ml="2">
                         Playoffs
                     </FormLabel>
                 </FormControl>
