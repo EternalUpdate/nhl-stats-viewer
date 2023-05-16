@@ -176,9 +176,10 @@ export async function getSingleStatOverTheSeasons(statType: string, allSeasonsSt
  * 
  * @param allSeasonsStats optional PlayerSeasonStats array used to group the seasons
  * @param playerID optional player ID to fetch all season stats if none were given
+ * @param playoffs boolean true if no stats are given and playoff stats should be fetched
  * @returns an array of strings containing the seasons in the format "yearStartyearEnd", "20222023"
  */
-export async function getAllNHLSeasons(allSeasonsStats?: PlayerSeasonStats[], playerID?: number): Promise<string[]> {
+export async function getAllNHLSeasons(allSeasonsStats?: PlayerSeasonStats[], playerID?: number, playoffs=false): Promise<string[]> {
     // no info specified -- get all seasons available in the NHL API
     if (!allSeasonsStats && !playerID) {
         try {
@@ -201,7 +202,11 @@ export async function getAllNHLSeasons(allSeasonsStats?: PlayerSeasonStats[], pl
     // get all seasons data as necessary if a specific player is given
     if (!allSeasonsStats && playerID) {
         try {
-            allSeasonsStats = await getAllSeasonsPlayerStats(playerID);
+            if (playoffs) {
+                allSeasonsStats = await getAllSeasonsPlayerStats(playerID, true);                    
+            } else {
+                allSeasonsStats = await getAllSeasonsPlayerStats(playerID);                
+            }
         } catch (error) {
             console.log("getAllNHLSeasons(): ", error);
             return [];
