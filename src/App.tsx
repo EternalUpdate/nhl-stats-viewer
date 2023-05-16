@@ -1,21 +1,39 @@
 import "./App.css";
 import PlayerStatLineChart from "./components/PlayerStatLineChart";
-import { Text, Heading, Box, Link } from "@chakra-ui/react";
+import {
+    Text,
+    Heading,
+    Box,
+    Link,
+    Switch,
+    VStack,
+    FormControl,
+    FormLabel,
+} from "@chakra-ui/react";
 import { Section } from "./components/Section";
 import PlayerSearchComponent from "./components/PlayerSearchComponent";
 import PlayerInfoComponent from "./components/PlayerInfoComponent";
 import { useState } from "react";
 
 // test
-// import "./utils/nhl-api-helpers";
+import "./utils/nhl-api-helpers";
 
 function App() {
-    const [playerID, setPlayerID] = useState(8476981); // Default player ID
+    const [playerID, setPlayerID] = useState<number>(8476981);
+    const [playoffs, setPlayoffs] = useState<boolean>(false);
 
     const handlePlayerSearch = async (playerID: number) => {
         if (playerID) {
             setPlayerID(playerID); // Update the player ID with the ID of the first found player
             console.log(playerID);
+        }
+    };
+
+    const handlePlayoffsToggle = () => {
+        if (playoffs) {
+            setPlayoffs(false);
+        } else {
+            setPlayoffs(true);
         }
     };
 
@@ -30,13 +48,32 @@ function App() {
                 See progress over time{" "}
             </Text>
 
-            <PlayerInfoComponent playerID={playerID}></PlayerInfoComponent>
+            <VStack
+                spacing={{ base: "8", md: "20" }}
+                mb={{ base: "0", md: "-8" }}
+            >
+                <PlayerInfoComponent playerID={playerID}></PlayerInfoComponent>
+                <FormControl
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    <Switch
+                        id="playoffs-toggle"
+                        onChange={handlePlayoffsToggle}
+                    />
+                    <FormLabel htmlFor="playoffs-toggle-label" mb="0" ml="2">
+                        Playoffs
+                    </FormLabel>
+                </FormControl>
+            </VStack>
 
             <Section title="Production">
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["goals", "assists", "points"]}
                     title="Goals, Assists, and Points"
+                    playoffs={playoffs}
                 />
                 <Box
                     display={{ base: "block", md: "flex" }}
@@ -51,11 +88,13 @@ function App() {
                         playerID={playerID}
                         statTypes={["shots"]}
                         title="Shots"
+                        playoffs={playoffs}
                     />
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["shotPct"]}
                         title="Shot Percentage"
+                        playoffs={playoffs}
                     />
                 </Box>
             </Section>
@@ -65,16 +104,19 @@ function App() {
                     playerID={playerID}
                     statTypes={["games"]}
                     title="Games Played"
+                    playoffs={playoffs}
                 />
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["evenTimeOnIce"]}
                     title="Even Strength Total Time on Ice per Season"
+                    playoffs={playoffs}
                 />
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["shifts"]}
                     title="Shifts"
+                    playoffs={playoffs}
                 />
             </Section>
 
@@ -83,11 +125,13 @@ function App() {
                     playerID={playerID}
                     statTypes={["hits"]}
                     title="Hits"
+                    playoffs={playoffs}
                 />
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["pim"]}
                     title="Penalty Minutes"
+                    playoffs={playoffs}
                 />
             </Section>
 
@@ -96,21 +140,25 @@ function App() {
                     playerID={playerID}
                     statTypes={["powerPlayGoals", "powerPlayPoints"]}
                     title="Power Play (Production)"
+                    playoffs={playoffs}
                 />
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["powerPlayTimeOnIce"]}
                     title="Power Play (Total TOI per Season)"
+                    playoffs={playoffs}
                 />
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["shortHandedGoals", "shortHandedPoints"]}
                     title="Penalty Kill"
+                    playoffs={playoffs}
                 />
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["shortHandedTimeOnIce"]}
                     title="Penalty Kill (Total TOI per Season)"
+                    playoffs={playoffs}
                 />
             </Section>
 
@@ -119,6 +167,7 @@ function App() {
                     playerID={playerID}
                     statTypes={["gameWinningGoals", "overTimeGoals"]}
                     title="Game Winning and Overtime Goals"
+                    playoffs={playoffs}
                 />
             </Section>
 
@@ -127,11 +176,13 @@ function App() {
                     playerID={playerID}
                     statTypes={["blocked"]}
                     title="Blocked Shots"
+                    playoffs={playoffs}
                 />
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["plusMinus"]}
                     title="Plus Minus"
+                    playoffs={playoffs}
                 />
             </Section>
 
@@ -140,6 +191,7 @@ function App() {
                     playerID={playerID}
                     statTypes={["faceOffPct"]}
                     title="Face-Off Percentage"
+                    playoffs={playoffs}
                 />
             </Section>
             <Text fontSize="sm" mt="28" color="gray.500">
