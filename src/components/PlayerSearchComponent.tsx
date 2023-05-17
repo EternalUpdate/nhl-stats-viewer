@@ -108,12 +108,17 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
                         {...getMenuProps()}
                     >
                         {foundPlayers.map((player, index) => (
-                            <Text
+                            <Box
                                 key={player?.id}
                                 {...getItemProps({
                                     index,
                                     item: player,
                                     style: {
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        padding: "6px 24px",
+                                        gap: "10px",
                                         backgroundColor:
                                             highlightedIndex === index
                                                 ? "#EDF2F7"
@@ -125,9 +130,12 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
                                     },
                                 })}
                             >
-                                {player?.fullName} - #{player?.primaryNumber}{" "}
-                                {player?.currentTeam?.abbreviation}
-                            </Text>
+                                <Text textAlign="left">{player?.fullName}</Text>
+                                <Text color="gray.500" fontSize="xs">
+                                    #{player?.primaryNumber}{" "}
+                                    {player?.currentTeam?.abbreviation}
+                                </Text>
+                            </Box>
                         ))}
                     </Box>
                 )}
