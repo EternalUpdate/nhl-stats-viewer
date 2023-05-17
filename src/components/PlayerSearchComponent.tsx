@@ -1,48 +1,147 @@
-import { Input, FormControl, HStack, IconButton } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+    Input,
+    FormControl,
+    Box,
+    Text,
+    InputGroup,
+    InputRightElement,
+} from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { searchLeagueForPlayer } from "../utils/nhl-api-helpers";
 import { Search2Icon } from "@chakra-ui/icons";
+import { PlayerInfo } from "../types/PlayerInfo";
+import "../App.css";
+import { useCombobox } from "downshift"; // autocomplete goodness
 
 const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
     const [searchText, setSearchText] = useState("");
+    const [foundPlayers, setFoundPlayers] = useState<(PlayerInfo | null)[]>([]);
 
-    const handleInputChange = (event: any) => {
-        setSearchText(event.target.value);
+    /**
+     * Handles the input change event in the search input box.
+     * Updates the search text state and retrieves matching players.
+     */
+    const handleInputChange = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const inputValue = event.target.value;
+        setSearchText(inputValue);
+        const players = await searchLeagueForPlayer(inputValue);
+        setFoundPlayers(players);
     };
 
-    const handleSubmit = async (event: any) => {
-        event.preventDefault(); // Prevent form submission refresh
-        const foundPlayers = await searchLeagueForPlayer(searchText);
-        const firstPlayerID = foundPlayers[0]?.id; // Get the ID of the first player
+    /**
+     * Handles the selection of a player from the dropdown menu.
+     * Executes the player search callback, clears the search text and found players,
+     * and closes the dropdown menu.
+     * @param playerID - The ID of the selected player.
+     */
+    const handlePlayerSelect = (playerID: number) => {
+        onPlayerSearch(playerID);
+        setSearchText("");
+        setFoundPlayers([]);
+        toggleMenu();
+    };
 
-        if (firstPlayerID) {
-            onPlayerSearch(firstPlayerID);
-        } else {
-            console.log(
-                "PlayerSearchComponent — handleSubmit(): no player found"
-            );
+    /**
+     * Uses the useCombobox hook from the Downshift library to manage the behavior of the search input and the auto-suggestion dropdown menu.
+     */
+    const {
+        isOpen,
+        getMenuProps,
+        getInputProps,
+        highlightedIndex,
+        getItemProps,
+        toggleMenu,
+    } = useCombobox({
+        items: foundPlayers,
+        onInputValueChange: ({ inputValue }) => setSearchText(inputValue || ""),
+        itemToString: (player) => (player ? player.fullName : ""),
+        onSelectedItemChange: ({ selectedItem }) => {
+            if (selectedItem) {
+                handlePlayerSelect(selectedItem.id);
+            }
+        },
+    });
+
+    useEffect(() => {
+        if (!isOpen) {
+            setSearchText(""); // Clear the search text when the dropdown menu is closed
         }
-    };
+    }, [isOpen]);
 
     return (
-        <form onSubmit={handleSubmit}>
-            <FormControl mb="14">
-                <HStack justifyContent="center">
-                    <Input
-                        type="text"
-                        value={searchText}
-                        onChange={handleInputChange}
-                        placeholder="Enter player name"
-                        w={{ base: "64", md: "30%" }}
-                    />
-                    <IconButton
-                        aria-label="search"
-                        icon={<Search2Icon />}
-                        type="submit"
-                    ></IconButton>
-                </HStack>
+        <div>
+            <FormControl mx="auto" mb="14" w={{ base: "64", md: "30%" }}>
+                <div>
+                    <InputGroup>
+                        <Input
+                            type="text"
+                            {...getInputProps()}
+                            value={searchText}
+                            onChange={handleInputChange}
+                            placeholder="Enter player name"
+                            w={{ base: "64", md: "100%" }}
+                        />
+                        <InputRightElement>
+                            <Search2Icon />
+                        </InputRightElement>
+                    </InputGroup>
+                </div>
+                {/* The autocomplete stuff */}
+                {isOpen && (
+                    <Box
+                        className={
+                            foundPlayers.length > 0 && searchText !== ""
+                                ? "fade-in-top"
+                                : "fade-out"
+                        }
+                        mt="2"
+                        p="2"
+                        borderWidth="1px"
+                        borderRadius="md"
+                        style={
+                            !(foundPlayers.length > 0 && searchText !== "")
+                                ? { height: 0, overflow: "hidden" }
+                                : {}
+                        }
+                        {...getMenuProps()}
+                    >
+                        {foundPlayers.map((player, index) => (
+                            <Box
+                                key={player?.id}
+                                {...getItemProps({
+                                    index,
+                                    item: player,
+                                    style: {
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                        padding: "6px 24px",
+                                        gap: "10px",
+                                        backgroundColor:
+                                            highlightedIndex === index
+                                                ? "#EDF2F7"
+                                                : "transparent",
+                                        cursor: "pointer",
+                                        borderRadius: "5px",
+                                        transition:
+                                            "background-color 150ms linear",
+                                    },
+                                })}
+                            >
+                                <Text textAlign="left">{player?.fullName}</Text>
+                                <Text color="gray.500" fontSize="xs">
+                                    #{player?.primaryNumber}{" "}
+                                    {player?.currentTeam?.abbreviation}
+                                </Text>
+                            </Box>
+                        ))}
+                    </Box>
+                )}
+                {/* End of the autocomplete stuff */}
             </FormControl>
-        </form>
+        </div>
     );
 };
 

@@ -1,6 +1,6 @@
 import { Text, Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { getPlayerInfo, getTeamAbbrFromPlayer } from "../utils/nhl-api-helpers";
+import { getPlayerInfo } from "../utils/nhl-api-helpers";
 
 const PlayerInfoComponent = ({ playerID }: { playerID: number }) => {
     const [name, setName] = useState<string>("A hockey player");
@@ -15,14 +15,15 @@ const PlayerInfoComponent = ({ playerID }: { playerID: number }) => {
         const fetchPlayerInfo = async () => {
             try {
                 const playerInfo = await getPlayerInfo(playerID);
-                const abbr = await getTeamAbbrFromPlayer(playerID);
-                setName(`${playerInfo.firstName} ${playerInfo.lastName}`);
-                setJerseyNumber(playerInfo.primaryNumber);
-                setTeamAbbr(abbr);
-                setAge(playerInfo.currentAge);
-                setHeight(playerInfo.height);
-                setWeight(playerInfo.weight);
-                setPosition(playerInfo.primaryPosition.abbreviation);
+                if (playerInfo) {
+                    setName(`${playerInfo.firstName} ${playerInfo.lastName}`);
+                    setJerseyNumber(playerInfo.primaryNumber);
+                    setTeamAbbr(playerInfo.currentTeam.abbreviation);
+                    setAge(playerInfo.currentAge);
+                    setHeight(playerInfo.height);
+                    setWeight(playerInfo.weight);
+                    setPosition(playerInfo.primaryPosition.abbreviation);
+                }
             } catch (error) {
                 console.log("Error fetching player info: ", error);
             }

@@ -1,4 +1,5 @@
 import { PlayerSeasonStats, addPlayerSeasonStats } from "../types/PlayerSeasonStats";
+import { PlayerInfo } from "../types/PlayerInfo";
 
 /**
  * Gets player stats for the given season.
@@ -267,49 +268,58 @@ export async function getAllSeasonLabels(allSeasonsStats?: PlayerSeasonStats[], 
  */
 export async function searchTeamForPlayer (name: string, teamID: number): Promise<any> {
     try {
-      const response = await fetch(
-        `https://statsapi.web.nhl.com/api/v1/teams/${teamID}/roster`
-      );
-      const data = await response.json();
-  
-      // Extract the player data from the roster
-      const players = data.roster.map((player: any) => player.person);
-  
-      // Filter the players based on the name
-      const filteredPlayers = players.filter((player: any) =>
-        player.fullName.toLowerCase().includes(name.toLowerCase())
-      );
-  
-      return filteredPlayers;
+        const response = await fetch(
+            `https://statsapi.web.nhl.com/api/v1/teams/${teamID}/roster`
+        );
+        const data = await response.json();
+    
+        // Extract the player data from the roster
+        const players = data.roster.map((player: any) => player.person);
+    
+        // Filter the players based on the name
+        const filteredPlayers = players.filter((player: any) =>
+            player.fullName.toLowerCase().includes(name.toLowerCase())
+        );
+    
+        return filteredPlayers;
     } catch (error) {
       console.log("searchTeamForPlayer(): ", error);
     }
 }
 
 /**
- * Searches the league for a given player and returns a Promise to an array of players that match that name.
+ * Searches the league for a given player and returns a Promise to an array of PlayerInfo objects that match that name.
  * 
  * @param name string representing the name of the desired player
- * @returns a Promise to an array of players that match that name
+ * @returns a Promise to an array of PlayerInfo objects that match that name
  */
-export async function searchLeagueForPlayer(name: string): Promise<any[]> {
+export async function searchLeagueForPlayer(name: string): Promise<(PlayerInfo | null)[]> {
     try {
-      const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/`);
-      const data = await response.json();
+        const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/`);
+        const data = await response.json();
+    
+        const searchPromises = data.teams.map((team: any) => searchTeamForPlayer(name, team.id));
+    
+        const foundPlayers = await Promise.all(searchPromises);
+            
+        // Extract the first element from each non-empty array
+        const filteredPlayers = await Promise.all(
+            foundPlayers
+              .filter((players: any[]) => players.length > 0)
+              .map(async (players: any[]) => {
+                if (players[0]) {
+                  const player = await getPlayerInfo(players[0].id);
+                  return player;
+                } else {
+                  return null;
+                }
+              })
+        );
   
-      const searchPromises = data.teams.map((team: any) => searchTeamForPlayer(name, team.id));
-  
-      const foundPlayers = await Promise.all(searchPromises);
-        
-      // Extract the first element from each non-empty array
-      const filteredPlayers = foundPlayers
-        .filter((players: any[]) => players.length > 0)
-        .map((players: any[]) => players[0] || null);
-  
-      return filteredPlayers;
+        return filteredPlayers;
     } catch (error) {
-      console.log("searchLeagueForPlayer(): ", error);
-      return []; // Return an empty array as a fallback
+        console.log("searchLeagueForPlayer(): ", error);
+        return []; // Return an empty array as a fallback
     }
 }
 
@@ -319,16 +329,50 @@ export async function searchLeagueForPlayer(name: string): Promise<any[]> {
  * @param playerID number corresponding to the desired player
  * @returns a Promise to the given player's information
  */
-export async function getPlayerInfo(playerID: number): Promise<any> {
+export async function getPlayerInfo(playerID: number): Promise<PlayerInfo | null> {
     try {
         const response = await fetch(`https://statsapi.web.nhl.com/api/v1/people/${playerID}`)
         const data = await response.json();
 
-        const playerInfo = data.people[0];
+        const player = data.people[0];
+        const teamAbbr = await getTeamAbbrFromTeam(player.currentTeam.id);
+        const playerInfo: PlayerInfo = {
+            id: player.id,
+            fullName: player.fullName,
+            firstName: player.firstName,
+            lastName: player.lastName,
+            primaryNumber: player.primaryNumber,
+            birthDate: player.birthDate,
+            currentAge: player.currentAge,
+            birthCity: player.birthCity,
+            birthStateProvince: player.birthStateProvince,
+            birthCountry: player.birthCountry,
+            nationality: player.nationality,
+            height: player.height,
+            weight: player.weight,
+            active: player.active,
+            alternateCaptain: player.alternateCaptain,
+            captain: player.captain,
+            rookie: player.rookie,
+            shootsCatches: player.shootsCatches,
+            rosterStatus: player.rosterStatus,
+            currentTeam: {
+              id: player.currentTeam.id,
+              name: player.currentTeam.name,
+              abbreviation: teamAbbr,
+            },
+            primaryPosition: {
+              code: player.primaryPosition.code,
+              name: player.primaryPosition.name,
+              type: player.primaryPosition.type,
+              abbreviation: player.primaryPosition.abbreviation,
+            },
+          };
 
         return playerInfo;
     } catch (error) {
         console.log("getPlayerInfo(): ", error);
+        return null;
     }
 }
 
@@ -338,17 +382,39 @@ export async function getPlayerInfo(playerID: number): Promise<any> {
  * @param playerID number representing the desired player
  * @returns the abbreviation of the team the given player plays for
  */
-export async function getTeamAbbrFromPlayer(playerID: number): Promise<any> {
+export async function getTeamAbbrFromTeam(teamID: number): Promise<string> {
     try {
-        const playerInfo = await getPlayerInfo(playerID);
-        const teamID = await playerInfo.currentTeam?.id;
-
         const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}`);
         const data = await response.json();
 
         return data.teams[0].abbreviation;
     } catch (error) {
         console.log("getTeamAbbrFromPlayer(): ", error);
+        return "";
+    }
+}
+
+/**
+ * Returns the abbreviation of the team the given player plays for.
+ * 
+ * @param playerID number representing the desired player
+ * @returns the abbreviation of the team the given player plays for
+ */
+export async function getTeamAbbrFromPlayer(playerID: number): Promise<string> {
+    try {
+        const playerInfo = await getPlayerInfo(playerID);
+        if (playerInfo) {
+            const teamID = await playerInfo.currentTeam.id;
+            const response = await fetch(`https://statsapi.web.nhl.com/api/v1/teams/${teamID}`);
+            const data = await response.json();
+
+            return data.teams[0].abbreviation;
+        }
+
+        return "";
+    } catch (error) {
+        console.log("getTeamAbbrFromPlayer(): ", error);
+        return "";
     }
 }
 
