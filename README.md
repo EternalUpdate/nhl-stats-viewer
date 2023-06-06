@@ -16,8 +16,11 @@ The app is styled with [Chakra UI](https://github.com/chakra-ui/chakra-ui) and a
 https://nhl-stats-viewer.netlify.app
 
 ## Suggested Future Features
+* Page routing and a separate home page
+* Sections for stats per game and projected over 82 games
+* Side navigation to jump to different sections
+* Collapsible sections?
 * Adding league averages to the graphs
-* Individual time average graphs (e.g. average even strength TOI per season)
 * Compare two (or more?) players
 * Some advanced stats (xGF, xGA)
 * Searching for all players (including retired / LTIR)
