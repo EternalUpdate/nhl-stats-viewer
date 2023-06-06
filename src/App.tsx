@@ -3,7 +3,6 @@ import PlayerStatLineChart from "./components/PlayerStatLineChart";
 import {
     Text,
     Heading,
-    Box,
     Link,
     Switch,
     VStack,
