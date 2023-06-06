@@ -1,4 +1,4 @@
-import { addMinuteSecond } from "../utils/time-helpers";
+import { addMinuteSecond, divideMinuteSecond } from "../utils/time-helpers";
 
 /**
  * Player season stats as returned by NHL API calls for yearByYear, singleSeason, and careerRegularSeason, among others.
@@ -32,7 +32,7 @@ export type PlayerSeasonStats = {
   evenTimeOnIcePerGame: string;
   shortHandedTimeOnIcePerGame: string;
   powerPlayTimeOnIcePerGame: string;
-  [key: string]: any;
+  [key: string]: any; // so the fields can be accessed e.g. ["goals"]
 };
 
 /**
@@ -73,5 +73,47 @@ export function addPlayerSeasonStats(stats1: PlayerSeasonStats, stats2: PlayerSe
       shortHandedTimeOnIcePerGame: addMinuteSecond(stats1.shortHandedTimeOnIcePerGame, stats2.shortHandedTimeOnIcePerGame),
       powerPlayTimeOnIcePerGame: addMinuteSecond(stats1.powerPlayTimeOnIcePerGame, stats2.powerPlayTimeOnIcePerGame),
   };
+}
+
+/**
+ * Calculates the season stats at a per game rate where applicable.
+ * Where it's not applicable, it preserves the original value.
+ * 
+ * @param stats original PlayerSeasonStats
+ * @returns the season stats at a per game rate where applicable
+ */
+export function getPlayerSeasonStatsPerGame(stats: PlayerSeasonStats): PlayerSeasonStats {
+  const games = stats.games;
+
+  return {
+    season: stats.season,
+    timeOnIce: stats.timeOnIce,
+    assists: stats.assists / games,
+    goals: stats.goals / games,
+    pim: stats.pim / games,
+    shots: stats.shots / games,
+    games: stats.games,
+    hits: stats.hits / games,
+    powerPlayGoals: stats.powerPlayGoals / games,
+    powerPlayPoints: stats.powerPlayPoints / games,
+    powerPlayTimeOnIce: stats.powerPlayTimeOnIce,
+    evenTimeOnIce: stats.evenTimeOnIce,
+    penaltyMinutes: divideMinuteSecond(stats.penaltyMinutes, games),
+    faceOffPct: stats.faceOffPct,
+    shotPct: stats.shotPct,
+    gameWinningGoals: stats.gameWinningGoals,
+    overTimeGoals: stats.overTimeGoals,
+    shortHandedGoals: stats.shortHandedGoals,
+    shortHandedPoints: stats.shortHandedPoints,
+    shortHandedTimeOnIce: stats.shortHandedTimeOnIce,
+    blocked: stats.blocked / games,
+    plusMinus: stats.plusMinus,
+    points: stats.points / games,
+    shifts: stats.shifts / games,
+    timeOnIcePerGame: divideMinuteSecond(stats.timeOnIce, games),
+    evenTimeOnIcePerGame: divideMinuteSecond(stats.evenTimeOnIce, games),
+    shortHandedTimeOnIcePerGame: divideMinuteSecond(stats.shortHandedTimeOnIce, games),
+    powerPlayTimeOnIcePerGame: divideMinuteSecond(stats.powerPlayTimeOnIce, games)
+  }
 }
 
