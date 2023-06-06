@@ -11,6 +11,7 @@ import {
     FormLabel,
 } from "@chakra-ui/react";
 import { Section } from "./components/Section";
+import { Subsection } from "./components/Subsection";
 import PlayerSearchComponent from "./components/PlayerSearchComponent";
 import PlayerInfoComponent from "./components/PlayerInfoComponent";
 import { useState } from "react";
@@ -18,7 +19,6 @@ import { useState } from "react";
 // test
 import "./utils/nhl-api-helpers";
 import "./utils/time-helpers";
-import { Subsection } from "./components/Subsection";
 
 function App() {
     const [playerID, setPlayerID] = useState<number>(8476981);
