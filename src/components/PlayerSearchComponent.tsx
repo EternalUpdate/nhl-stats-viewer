@@ -12,10 +12,12 @@ import { Search2Icon } from "@chakra-ui/icons";
 import { PlayerInfo } from "../types/PlayerInfo";
 import "../App.css";
 import { useCombobox } from "downshift"; // autocomplete goodness
+import { useNavigate } from "react-router-dom";
 
 const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
     const [searchText, setSearchText] = useState("");
     const [foundPlayers, setFoundPlayers] = useState<(PlayerInfo | null)[]>([]);
+    const navigate = useNavigate();
 
     /**
      * Handles the input change event in the search input box.
@@ -41,6 +43,9 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
         setSearchText("");
         setFoundPlayers([]);
         toggleMenu();
+
+        // Update the URL with the selected player ID
+        navigate(`/player/${playerID}`);
     };
 
     /**
