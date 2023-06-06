@@ -1,9 +1,16 @@
 import PlayerSeasonGraphsPage from "./pages/PlayerSeasonGraphsPage";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
     return (
         <>
-            <PlayerSeasonGraphsPage />
+            <Routes>
+                <Route path="/" element={<PlayerSeasonGraphsPage />} />
+                <Route
+                    path="/player/:playerID"
+                    element={<PlayerSeasonGraphsPage />}
+                />
+            </Routes>
         </>
     );
 }
