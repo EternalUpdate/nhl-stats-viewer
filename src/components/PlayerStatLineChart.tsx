@@ -38,7 +38,7 @@ interface PlayerStatLineChartProps {
     playoffs?: boolean;
 }
 
-const SingleStatPlayerLineChart = ({
+const PlayerStatLineChart = ({
     playerID,
     statTypes,
     title,
@@ -218,4 +218,4 @@ const SingleStatPlayerLineChart = ({
     );
 };
 
-export default SingleStatPlayerLineChart;
+export default PlayerStatLineChart;
