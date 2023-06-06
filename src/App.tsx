@@ -18,6 +18,7 @@ import { useState } from "react";
 // test
 import "./utils/nhl-api-helpers";
 import "./utils/time-helpers";
+import { Subsection } from "./components/Subsection";
 
 function App() {
     const [playerID, setPlayerID] = useState<number>(8476981);
@@ -76,15 +77,7 @@ function App() {
                     title="Goals, Assists, and Points"
                     playoffs={playoffs}
                 />
-                <Box
-                    display={{ base: "block", md: "flex" }}
-                    flexGrow="1"
-                    flexDirection="row"
-                    flexWrap="wrap"
-                    gap="70px"
-                    justifyContent="space-evenly"
-                    alignContent="center"
-                >
+                <Subsection>
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["shots"]}
@@ -97,7 +90,7 @@ function App() {
                         title="Shot Percentage"
                         playoffs={playoffs}
                     />
-                </Box>
+                </Subsection>
             </Section>
 
             <Section title="Health and Utilization">
@@ -107,15 +100,7 @@ function App() {
                     title="Games Played"
                     playoffs={playoffs}
                 />
-                <Box
-                    display={{ base: "block", md: "flex" }}
-                    flexGrow="1"
-                    flexDirection="row"
-                    flexWrap="wrap"
-                    gap="70px"
-                    justifyContent="space-evenly"
-                    alignContent="center"
-                >
+                <Subsection>
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["timeOnIcePerGame"]}
@@ -128,16 +113,8 @@ function App() {
                         title="Total Time on Ice per Season"
                         playoffs={playoffs}
                     />
-                </Box>
-                <Box
-                    display={{ base: "block", md: "flex" }}
-                    flexGrow="1"
-                    flexDirection="row"
-                    flexWrap="wrap"
-                    gap="70px"
-                    justifyContent="space-evenly"
-                    alignContent="center"
-                >
+                </Subsection>
+                <Subsection>
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["evenTimeOnIcePerGame"]}
@@ -150,7 +127,8 @@ function App() {
                         title="Even Strength Total Time on Ice per Season"
                         playoffs={playoffs}
                     />
-                </Box>
+                </Subsection>
+
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["shifts"]}
@@ -181,15 +159,7 @@ function App() {
                     title="Power Play (Production)"
                     playoffs={playoffs}
                 />
-                <Box
-                    display={{ base: "block", md: "flex" }}
-                    flexGrow="1"
-                    flexDirection="row"
-                    flexWrap="wrap"
-                    gap="70px"
-                    justifyContent="space-evenly"
-                    alignContent="center"
-                >
+                <Subsection>
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["powerPlayTimeOnIcePerGame"]}
@@ -202,22 +172,15 @@ function App() {
                         title="Power Play (Total TOI per Season)"
                         playoffs={playoffs}
                     />
-                </Box>
+                </Subsection>
+
                 <PlayerStatLineChart
                     playerID={playerID}
                     statTypes={["shortHandedGoals", "shortHandedPoints"]}
                     title="Penalty Kill"
                     playoffs={playoffs}
                 />
-                <Box
-                    display={{ base: "block", md: "flex" }}
-                    flexGrow="1"
-                    flexDirection="row"
-                    flexWrap="wrap"
-                    gap="70px"
-                    justifyContent="space-evenly"
-                    alignContent="center"
-                >
+                <Subsection>
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["shortHandedTimeOnIcePerGame"]}
@@ -230,7 +193,7 @@ function App() {
                         title="Penalty Kill (Total TOI per Season)"
                         playoffs={playoffs}
                     />
-                </Box>
+                </Subsection>
             </Section>
 
             <Section title="Clutch Factor">
