@@ -1,5 +1,7 @@
 import { PlayerSeasonStats, addPlayerSeasonStats } from "../types/PlayerSeasonStats";
 import { PlayerInfo } from "../types/PlayerInfo";
+import { divideMinuteSecond, minuteSecondStringToNum } from "./time-helpers";
+import { numToMinuteSecond } from "./time-helpers";
 
 /**
  * Gets player stats for the given season.
@@ -21,6 +23,22 @@ export async function getSeasonPlayerStats(playerID: number, season: string, pla
         
         const data = await response.json();
         const stats = data.stats[0].splits[0].stat;
+
+        const games = stats.games;
+        // calculate average TOI
+        const totalTOI = {
+            total: stats.timeOnIce,
+            evenTOI: stats.evenTimeOnIce,
+            ppTOI: stats.powerPlayTimeOnIce,
+            pkTOI: stats.shortHandedTimeOnIce
+        }
+
+        const avgTOI = {
+            avg: divideMinuteSecond(totalTOI.total, games),
+            evenTOIavg: divideMinuteSecond(totalTOI.evenTOI, games),
+            ppTOIavg: divideMinuteSecond(totalTOI.ppTOI, games),
+            pkTOIavg: divideMinuteSecond(totalTOI.pkTOI, games)
+        }
 
         const playerStats: PlayerSeasonStats = {
             season: data.stats[0].splits[0].season,
@@ -47,11 +65,11 @@ export async function getSeasonPlayerStats(playerID: number, season: string, pla
             plusMinus: stats.plusMinus,
             points: stats.points,
             shifts: stats.shifts,
-            timeOnIcePerGame: stats.timeOnIcePerGame,
-            evenTimeOnIcePerGame: stats.evenTimeOnIcePerGame,
-            shortHandedTimeOnIcePerGame: stats.shortHandedTimeOnIcePerGame,
-            powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
-        }        
+            timeOnIcePerGame: avgTOI.avg,
+            evenTimeOnIcePerGame: avgTOI.evenTOIavg,
+            shortHandedTimeOnIcePerGame: avgTOI.pkTOIavg,
+            powerPlayTimeOnIcePerGame: avgTOI.ppTOIavg,
+        }                
         
         return playerStats;
     } catch (error) {
@@ -84,7 +102,24 @@ export async function getAllSeasonsPlayerStats(playerID: number, playoffs=false)
 
         for (const season of allSeasons) {
             if (season.league.name === "National Hockey League") {
-                const stats = season.stat;                
+                const stats = season.stat;    
+                
+                const games = stats.games;
+                // calculate average TOI
+                const totalTOI = {
+                    total: stats.timeOnIce,
+                    evenTOI: stats.evenTimeOnIce,
+                    ppTOI: stats.powerPlayTimeOnIce,
+                    pkTOI: stats.shortHandedTimeOnIce,
+                }
+
+                const avgTOI = {
+                    avg: divideMinuteSecond(totalTOI.total, games),
+                    evenTOIavg: divideMinuteSecond(totalTOI.evenTOI, games),
+                    ppTOIavg: divideMinuteSecond(totalTOI.ppTOI, games),
+                    pkTOIavg: divideMinuteSecond(totalTOI.pkTOI, games)
+                }
+
                 const currentPlayerSeasonStats: PlayerSeasonStats = {
                     season: season.season,
                     timeOnIce: stats.timeOnIce,
@@ -110,10 +145,10 @@ export async function getAllSeasonsPlayerStats(playerID: number, playoffs=false)
                     plusMinus: stats.plusMinus,
                     points: stats.points,
                     shifts: stats.shifts,
-                    timeOnIcePerGame: stats.timeOnIcePerGame,
-                    evenTimeOnIcePerGame: stats.evenTimeOnIcePerGame,
-                    shortHandedTimeOnIcePerGame: stats.shortHandedTimeOnIcePerGame,
-                    powerPlayTimeOnIcePerGame: stats.powerPlayTimeOnIcePerGame,
+                    timeOnIcePerGame: avgTOI.avg,
+                    evenTimeOnIcePerGame: avgTOI.evenTOIavg,
+                    shortHandedTimeOnIcePerGame: avgTOI.pkTOIavg,
+                    powerPlayTimeOnIcePerGame: avgTOI.ppTOIavg,
                 }
 
                 if (lastYear === season.season) {
