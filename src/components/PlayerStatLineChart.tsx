@@ -159,6 +159,7 @@ const SingleStatPlayerLineChart = ({
                                     return seconds;
                                 },
                             },
+                            beginAtZero: true,
                         },
                     },
                 });
