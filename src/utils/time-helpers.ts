@@ -53,3 +53,17 @@ export function addMinuteSecond(timeString1: string, timeString2: string): strin
 
     return numToMinuteSecond(summedSeconds);
 }
+
+/**
+ * Divides a string of the format "minute:seconds" or "minutes" by a numberr divisor.
+ * 
+ * @param timeString the string in the format "minute:seconds" or "minutes"
+ * @param divisor the number by which the time should be divided
+ * @returns a new string in the format "minute:seconds" or "minutes" representing the divided time
+ */
+export function divideMinuteSecond(timeString: string, divisor: number) {
+    let numTime = minuteSecondStringToNum(timeString);
+    numTime = numTime / divisor;
+
+    return numToMinuteSecond(numTime);
+}
