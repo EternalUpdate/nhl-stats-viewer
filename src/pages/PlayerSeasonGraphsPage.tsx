@@ -14,13 +14,25 @@ import { Subsection } from "../components/Subsection";
 import PlayerSearchComponent from "../components/PlayerSearchComponent";
 import PlayerInfoComponent from "../components/PlayerInfoComponent";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 // test
 import "../utils/nhl-api-helpers";
 import "../utils/time-helpers";
 
 const PlayerSeasonGraphsPage = () => {
-    const [playerID, setPlayerID] = useState<number>(8476981);
+    // Get the player ID from the URL (if applicable)
+    const URLPlayerID = useParams().playerID;
+    let defaultPlayerID: number;
+
+    if (URLPlayerID) {
+        defaultPlayerID = parseInt(URLPlayerID);
+        console.log(defaultPlayerID);
+    } else {
+        defaultPlayerID = 8476981;
+    }
+
+    const [playerID, setPlayerID] = useState<number>(defaultPlayerID);
     const [playoffs, setPlayoffs] = useState<boolean>(false);
 
     const handlePlayerSearch = async (playerID: number) => {
