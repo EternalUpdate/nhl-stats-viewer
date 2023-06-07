@@ -12,12 +12,10 @@ import { Search2Icon } from "@chakra-ui/icons";
 import { PlayerInfo } from "../types/PlayerInfo";
 import "../App.css";
 import { useCombobox } from "downshift"; // autocomplete goodness
-import { useNavigate } from "react-router-dom";
 
 const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
     const [searchText, setSearchText] = useState("");
     const [foundPlayers, setFoundPlayers] = useState<(PlayerInfo | null)[]>([]);
-    const navigate = useNavigate();
 
     /**
      * Handles the input change event in the search input box.
@@ -43,9 +41,6 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
         setSearchText("");
         setFoundPlayers([]);
         toggleMenu();
-
-        // Update the URL with the selected player ID
-        navigate(`/player/${playerID}`);
     };
 
     /**
@@ -77,18 +72,21 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
 
     return (
         <div>
-            <FormControl mx="auto" mb="14" w={{ base: "64", md: "30%" }}>
-                <div>
-                    <InputGroup>
+            <FormControl mx="auto" mb="14" w={{ base: "300px", md: "350px" }}>
+                <div className="player-search-input-div">
+                    <InputGroup zIndex={"2"}>
                         <Input
+                            className="player-search-input"
                             type="text"
+                            size="lg"
                             {...getInputProps()}
                             value={searchText}
                             onChange={handleInputChange}
                             placeholder="Enter player name"
-                            w={{ base: "64", md: "100%" }}
+                            w={{ base: "300px", md: "100%" }}
+                            bgColor={"white"}
                         />
-                        <InputRightElement>
+                        <InputRightElement height={"100%"} fontSize="lg">
                             <Search2Icon />
                         </InputRightElement>
                     </InputGroup>
@@ -105,6 +103,11 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
                         p="2"
                         borderWidth="1px"
                         borderRadius="md"
+                        bgColor={"white"}
+                        zIndex={"2"}
+                        position="relative"
+                        // maxH="400px"
+                        // overflowY="scroll"
                         style={
                             !(foundPlayers.length > 0 && searchText !== "")
                                 ? { height: 0, overflow: "hidden" }
@@ -120,6 +123,7 @@ const PlayerSearchComponent = ({ onPlayerSearch }: any) => {
                                     item: player,
                                     style: {
                                         display: "flex",
+                                        fontSize: "18px",
                                         alignItems: "center",
                                         justifyContent: "space-between",
                                         padding: "6px 24px",
