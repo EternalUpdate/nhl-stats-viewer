@@ -8,6 +8,7 @@ import {
     VStack,
     FormControl,
     FormLabel,
+    Box,
 } from "@chakra-ui/react";
 import { Section } from "../components/Section";
 import { Subsection } from "../components/Subsection";
@@ -15,7 +16,8 @@ import PlayerSearchComponent from "../components/PlayerSearchComponent";
 import PlayerInfoComponent from "../components/PlayerInfoComponent";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 
 // test
 import "../utils/nhl-api-helpers";
@@ -23,13 +25,13 @@ import "../utils/time-helpers";
 import { getPlayerInfo } from "../utils/nhl-api-helpers";
 
 const PlayerSeasonGraphsPage = () => {
+    const navigate = useNavigate();
     // Get the player ID from the URL (if applicable)
     const URLPlayerID = useParams().playerID;
     let defaultPlayerID: number;
 
     if (URLPlayerID) {
         defaultPlayerID = parseInt(URLPlayerID);
-        console.log(defaultPlayerID);
     } else {
         defaultPlayerID = 8476981;
     }
@@ -47,12 +49,13 @@ const PlayerSeasonGraphsPage = () => {
     // page title
     const pageTitle = playerName
         ? `${playerName} | NHL Stats Viewer`
-        : "NHL Stats Viewer";
+        : "Waiting...";
 
     const handlePlayerSearch = async (playerID: number) => {
         if (playerID) {
+            // Update the URL with the selected player ID
+            navigate(`/player/${playerID}`);
             setPlayerID(playerID); // Update the player ID with the ID of the first found player
-            console.log(playerID);
         }
     };
 
@@ -66,10 +69,11 @@ const PlayerSeasonGraphsPage = () => {
 
     return (
         <>
-            <HelmetProvider>
-                <Helmet>
-                    <title>{pageTitle}</title>
-                </Helmet>
+            <Helmet>
+                <title>{pageTitle}</title>
+            </Helmet>
+
+            <Box padding={"3rem"} className="player-stats-page">
                 <PlayerSearchComponent onPlayerSearch={handlePlayerSearch} />
 
                 <Heading size="lg" fontWeight="semibold" pt={{ base: "1" }}>
@@ -272,7 +276,7 @@ const PlayerSeasonGraphsPage = () => {
                         EternalUpdate
                     </Link>
                 </Text>
-            </HelmetProvider>
+            </Box>
         </>
     );
 };
