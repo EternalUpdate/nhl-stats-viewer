@@ -36,42 +36,67 @@ interface PlayerStatLineChartProps {
     statTypes: string[];
     title?: string;
     playoffs?: boolean;
+    allSeasonsStats?: PlayerSeasonStats[]; // either regular season or playoffs
 }
 
+/**
+ * A line chart that displays a player's stats over the seasons.
+ * If it's not given the player's stats over the seasons, it will fetch them from the NHL API.
+ *
+ * @prop {number} playerID - The ID of the player in the NHL API.
+ * @prop {string[]} statTypes - The type(s) of stats to display.
+ * @prop {string} title - The title of the chart.
+ * @prop {boolean} playoffs - Whether to fetch playoff stats or not (if the stats aren't given directly via allSeasonsStats).
+ * @prop {PlayerSeasonStats[]} allSeasonsStats - The player's stats over the seasons (either regular season or playoffs).
+ *
+ * @returns {JSX.Element} A line chart that displays a player's stats over the seasons.
+ */
 const PlayerStatLineChart = ({
     playerID,
     statTypes,
     title,
     playoffs,
+    allSeasonsStats,
 }: PlayerStatLineChartProps) => {
     const [options, setOptions] = useState<object>({});
     const [data, setData] = useState<any>({
         labels: [],
         datasets: [],
     });
+    const [stats, setStats] = useState<PlayerSeasonStats[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let allSeasonsStats: PlayerSeasonStats[];
-
-                if (playoffs) {
-                    allSeasonsStats = await getAllSeasonsPlayerStats(
-                        playerID,
-                        true
-                    );
-                } else {
-                    allSeasonsStats = await getAllSeasonsPlayerStats(playerID);
+                if (allSeasonsStats) {
+                    setStats(allSeasonsStats);
                 }
 
-                const chartLabels = await getAllSeasonLabels(allSeasonsStats);
+                if (playoffs) {
+                    if (!allSeasonsStats) {
+                        const newStats = await getAllSeasonsPlayerStats(
+                            playerID,
+                            true
+                        );
+                        setStats(newStats);
+                    }
+                } else {
+                    if (!allSeasonsStats) {
+                        const newStats = await getAllSeasonsPlayerStats(
+                            playerID
+                        );
+                        setStats(newStats);
+                    }
+                }
+
+                const chartLabels = await getAllSeasonLabels(stats);
 
                 // Prepare datasets for each stat type
                 const datasets = await Promise.all(
                     statTypes.map(async (statType, index) => {
                         let chartData = await getSingleStatOverTheSeasons(
                             statType,
-                            allSeasonsStats
+                            stats
                         );
 
                         if (statType.toLowerCase().includes("time")) {
@@ -173,7 +198,7 @@ const PlayerStatLineChart = ({
         };
 
         fetchData();
-    }, [playerID, statTypes]);
+    }, [playerID, statTypes, playoffs, allSeasonsStats, stats]);
 
     const chartTitle =
         title || (statTypes.length === 1 ? statTypes[0] : "Multiple Stats");
@@ -181,6 +206,7 @@ const PlayerStatLineChart = ({
     let maxWidth = "0px";
     let maxHeight = "0px";
 
+    // bigger charts when there are more stats
     if (statTypes.length > 2) {
         maxWidth = "500px";
         maxHeight = "300px";
