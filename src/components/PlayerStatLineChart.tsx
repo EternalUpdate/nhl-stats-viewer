@@ -198,7 +198,7 @@ const PlayerStatLineChart = ({
         };
 
         fetchData();
-    }, [playerID, statTypes, playoffs, allSeasonsStats, stats]);
+    }, [playerID, statTypes, playoffs, allSeasonsStats]);
 
     const chartTitle =
         title || (statTypes.length === 1 ? statTypes[0] : "Multiple Stats");
