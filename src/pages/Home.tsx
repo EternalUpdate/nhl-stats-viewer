@@ -13,12 +13,7 @@ const Home = () => {
 
     return (
         <>
-            <Flex
-                direction={"column"}
-                height={"100vh"}
-                width={"100%"}
-                paddingY={"2em"}
-            >
+            <Flex className={styles.homeContainer}>
                 <Flex className={styles.homeHeaderContainer}>
                     <Flex
                         width={"100%"}
