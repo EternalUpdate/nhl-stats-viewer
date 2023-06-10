@@ -1,0 +1,120 @@
+:root {
+    --wave-color: hsl(0, 0%, 95%);
+}
+
+.homeHeaderContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    align-items: baseline;
+    justify-content: flex-start;
+    padding: 0rem 3rem;
+    z-index: 1;
+}
+
+.homeTitle {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: hsl(0, 0%, 40%);
+    margin-right: 1rem;
+}
+
+.homeSubtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    color: hsl(0, 0%, 40%);
+}
+
+.homeHeroContainer {
+    margin-top: 25vh;
+    padding: 0rem 3rem;
+    z-index: 2;
+}
+
+.homeHeroTitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: hsl(0, 0%, 25%);
+    margin-bottom: 2rem;
+}
+
+.homeHeroEmphasis {
+    display: inline;
+    font-size: 2.7rem;
+    font-weight: 900;
+    background-image: linear-gradient(90deg, hsl(0, 100%, 50%), hsl(0, 100%, 70%));
+    background-size: 100%;
+    background-repeat: repeat;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+}
+
+.waveSvgBox {
+    /* position: relative; */
+    display: absolute;
+    min-height: 100px;
+}
+
+.waveDivider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.waveDivider svg {
+    position: relative;
+    display: block;
+    width: calc(177% + 1.3px);
+    height: 30vw;
+}
+
+.waveDivider .shapeFill {
+    fill: var(--wave-color);
+}
+
+.waveSvgBottomFill {
+    display: absolute;
+    min-height: 10vh;
+    background-color: var(--wave-color);
+}
+
+.credits {
+    font-size: 0.8rem;
+    color: hsl(0, 0%, 40%);
+    flex-grow: 2;
+    text-align: right;
+}
+
+@media screen and (max-width: 500px) {
+    .homeHeaderContainer {
+        padding: 0rem 1.5rem;
+    }
+
+    .homeTitle {
+        font-size: 0.8rem;
+    }
+
+    .homeSubtitle {
+        font-size: 0.6rem;
+    }
+
+    .credits {
+        font-size: 0.5rem;
+    }
+
+    .homeHeroContainer {
+        margin-top: 20vh;
+    }
+
+    .homeHeroTitle {
+        font-size: 1em;
+    }
+
+    .homeHeroEmphasis {
+        font-size: 1.2em;
+    }
+}
