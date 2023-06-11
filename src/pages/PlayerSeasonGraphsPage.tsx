@@ -130,6 +130,7 @@ const PlayerSeasonGraphsPage = () => {
                             <Switch
                                 id="playoffs-toggle"
                                 onChange={handlePlayoffsToggle}
+                                size={{ base: "lg", md: "md" }}
                             />
                             <FormLabel
                                 htmlFor="playoffs-toggle-label"
