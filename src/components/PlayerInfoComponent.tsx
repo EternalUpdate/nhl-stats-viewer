@@ -37,7 +37,7 @@ const PlayerInfoComponent = ({ playerID }: { playerID: number }) => {
             <Box
                 className="player-info-container"
                 m="1"
-                pt={{ base: "12", md: "16" }}
+                pt={{ base: "8", md: "12" }}
                 mb={{ md: "-10" }}
             >
                 <Text fontSize="2xl">{name}</Text>

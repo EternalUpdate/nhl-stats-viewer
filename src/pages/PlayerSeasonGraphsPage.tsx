@@ -13,6 +13,7 @@ import {
     TabPanels,
     Tab,
     TabPanel,
+    Flex,
 } from "@chakra-ui/react";
 import PlayerSearchComponent from "../components/PlayerSearchComponent";
 import PlayerInfoComponent from "../components/PlayerInfoComponent";
@@ -89,15 +90,29 @@ const PlayerSeasonGraphsPage = () => {
                 <title>{pageTitle}</title>
             </Helmet>
 
-            <Box padding={"3rem"} className="player-stats-page">
-                <PlayerSearchComponent onPlayerSearch={handlePlayerSearch} />
+            <Box padding={"2rem 3rem"} className="player-stats-page">
+                <Flex
+                    direction={"row"}
+                    mb="8"
+                    justify={{ base: "center", md: "flex-start" }}
+                >
+                    <Flex
+                        direction={"column"}
+                        align={"center"}
+                        justify={"center"}
+                    >
+                        <Link href="/">
+                            <Heading as="h1" fontSize="lg" color="gray.600">
+                                NHL Stats Viewer
+                            </Heading>
+                        </Link>
 
-                <Heading size="lg" fontWeight="semibold" pt={{ base: "1" }}>
-                    NHL Stats Viewer
-                </Heading>
-                <Text fontSize="lg" color="gray.500">
-                    See progress over time{" "}
-                </Text>
+                        <Text fontSize="sm" color="gray.500">
+                            See progress over time{" "}
+                        </Text>
+                    </Flex>
+                </Flex>
+                <PlayerSearchComponent onPlayerSearch={handlePlayerSearch} />
 
                 <VStack
                     spacing={{ base: "8", md: "20" }}
