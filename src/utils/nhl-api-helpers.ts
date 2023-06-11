@@ -207,22 +207,6 @@ export async function getSingleStatOverTheSeasons(statType: string, allSeasonsSt
 }
 
 /**
- * Converts the given PlayerSeasonStats to per game stats where appropriate.
- * 
- * @param allSeasonsPlayerStats PlayerSeasonStats array to convert
- * @returns a PlayerSeasonStats array with per game stats where appropriate
- */
-export function convertAllSeasonsStatsToPerGame(allSeasonsPlayerStats: PlayerSeasonStats[]): PlayerSeasonStats[] {
-    const statsPerGame: PlayerSeasonStats[] = [];
-
-    for (const seasonStats of allSeasonsPlayerStats) {
-        statsPerGame.push(getPlayerSeasonStatsPerGame(seasonStats));
-    }
-
-    return statsPerGame;
-}
-
-/**
  * Gets all of the NHL seasons either present in the NHL API or all the active NHL seasons for a given player or a given PlayerSeasonStats array.
  * 
  * @param allSeasonsStats optional PlayerSeasonStats array used to group the seasons
