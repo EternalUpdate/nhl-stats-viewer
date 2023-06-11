@@ -2,7 +2,7 @@ import PlayerStatLineChart from "../components/PlayerStatLineChart";
 import { Section } from "../components/Section";
 import { Subsection } from "../components/Subsection";
 import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
-import { convertAllSeasonsStatsToPerGame } from "../utils/nhl-api-helpers";
+import { convertAllSeasonsStatsToPerGame } from "../types/PlayerSeasonStats";
 
 interface PerGameGraphsProps {
     playerID: number;

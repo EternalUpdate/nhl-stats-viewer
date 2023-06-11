@@ -1,4 +1,4 @@
-import { PlayerSeasonStats, addPlayerSeasonStats, getPlayerSeasonStatsPerGame } from "../types/PlayerSeasonStats";
+import { PlayerSeasonStats, addPlayerSeasonStats } from "../types/PlayerSeasonStats";
 import { PlayerInfo } from "../types/PlayerInfo";
 import { divideMinuteSecond} from "./time-helpers";
 
@@ -204,22 +204,6 @@ export async function getSingleStatOverTheSeasons(statType: string, allSeasonsSt
     }
 
     return [];
-}
-
-/**
- * Converts the given PlayerSeasonStats to per game stats where appropriate.
- * 
- * @param allSeasonsPlayerStats PlayerSeasonStats array to convert
- * @returns a PlayerSeasonStats array with per game stats where appropriate
- */
-export function convertAllSeasonsStatsToPerGame(allSeasonsPlayerStats: PlayerSeasonStats[]): PlayerSeasonStats[] {
-    const statsPerGame: PlayerSeasonStats[] = [];
-
-    for (const seasonStats of allSeasonsPlayerStats) {
-        statsPerGame.push(getPlayerSeasonStatsPerGame(seasonStats));
-    }
-
-    return statsPerGame;
 }
 
 /**
