@@ -157,3 +157,35 @@ export function getProjectedPlayerSeasonStats(stats: PlayerSeasonStats): PlayerS
     powerPlayTimeOnIcePerGame: perGameStats.powerPlayTimeOnIcePerGame
    }
 }
+
+/**
+ * Converts the given PlayerSeasonStats to per game stats where appropriate.
+ * 
+ * @param allSeasonsPlayerStats PlayerSeasonStats array to convert
+ * @returns a PlayerSeasonStats array with per game stats where appropriate
+ */
+export function convertAllSeasonsStatsToPerGame(allSeasonsPlayerStats: PlayerSeasonStats[]): PlayerSeasonStats[] {
+  const statsPerGame: PlayerSeasonStats[] = [];
+
+  for (const seasonStats of allSeasonsPlayerStats) {
+      statsPerGame.push(getPlayerSeasonStatsPerGame(seasonStats));
+  }
+
+  return statsPerGame;
+}
+
+/**
+ * Converts the given PlayerSeasonStats to projected stats over 82 games where appropriate.
+ * 
+ * @param allSeasonsPlayerStats PlayerSeasonStats array to convert
+ * @returns a PlayerSeasonStats array with projected stats over 82 games where appropriate
+ */
+export function convertAllSeasonsStatsToProjections(allSeasonsPlayerStats: PlayerSeasonStats[]): PlayerSeasonStats[] {
+  const projections: PlayerSeasonStats[] = [];
+
+  for (const seasonStats of allSeasonsPlayerStats) {
+      projections.push(getProjectedPlayerSeasonStats(seasonStats));
+  }
+
+  return projections;
+}
