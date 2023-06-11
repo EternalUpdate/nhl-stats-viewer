@@ -18,16 +18,20 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
+import {
+    getAllSeasonsPlayerStats,
+    getPlayerInfo,
+} from "../utils/nhl-api-helpers";
+import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
 
 // test
-import "../utils/nhl-api-helpers";
-import "../utils/time-helpers";
-import { getPlayerInfo } from "../utils/nhl-api-helpers";
+// import "../utils/nhl-api-helpers";
 
 const PlayerSeasonGraphsPage = () => {
+    // sort out playerID
     const navigate = useNavigate();
-    // Get the player ID from the URL (if applicable)
-    const URLPlayerID = useParams().playerID;
+    const URLPlayerID = useParams().playerID; // Get the player ID from the URL (if applicable)
+
     let defaultPlayerID: number;
 
     if (URLPlayerID) {
@@ -36,21 +40,25 @@ const PlayerSeasonGraphsPage = () => {
         defaultPlayerID = 8476981;
     }
 
+    // states
     const [playerID, setPlayerID] = useState<number>(defaultPlayerID);
     const [playoffs, setPlayoffs] = useState<boolean>(false);
     const [playerName, setPlayerName] = useState<string | undefined>(undefined);
+    const [playerStats, setPlayerStats] = useState<PlayerSeasonStats[]>([]); // array of player season stats array (one object for each season)
 
     useEffect(() => {
+        // Get the player's name
         getPlayerInfo(playerID).then((playerInfo) => {
             setPlayerName(playerInfo?.fullName);
         });
     }, [playerID]);
 
-    // page title
+    // sort out page title
     const pageTitle = playerName
         ? `${playerName} | NHL Stats Viewer`
         : "Waiting...";
 
+    // component handlers
     const handlePlayerSearch = async (playerID: number) => {
         if (playerID) {
             // Update the URL with the selected player ID
@@ -60,12 +68,15 @@ const PlayerSeasonGraphsPage = () => {
     };
 
     const handlePlayoffsToggle = () => {
-        if (playoffs) {
-            setPlayoffs(false);
-        } else {
-            setPlayoffs(true);
-        }
+        setPlayoffs((prevState) => !prevState);
     };
+
+    useEffect(() => {
+        // fetch the player stats once so it can feed all the line charts
+        getAllSeasonsPlayerStats(playerID, playoffs).then((playerStats) => {
+            setPlayerStats(playerStats);
+        });
+    }, [playerID, playoffs]);
 
     return (
         <>
@@ -114,20 +125,20 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["goals", "assists", "points"]}
                         title="Goals, Assists, and Points"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                     <Subsection>
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["shots"]}
                             title="Shots"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["shotPct"]}
                             title="Shot Percentage"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                     </Subsection>
                 </Section>
@@ -137,20 +148,20 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["games"]}
                         title="Games Played"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                     <Subsection>
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["timeOnIcePerGame"]}
                             title="Average Time On Ice Per Game"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["timeOnIce"]}
                             title="Total Time on Ice per Season"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                     </Subsection>
                     <Subsection>
@@ -158,13 +169,13 @@ const PlayerSeasonGraphsPage = () => {
                             playerID={playerID}
                             statTypes={["evenTimeOnIcePerGame"]}
                             title="Average Even Strength Time On Ice Per Game"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["evenTimeOnIce"]}
                             title="Even Strength Total Time on Ice per Season"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                     </Subsection>
 
@@ -172,7 +183,7 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["shifts"]}
                         title="Shifts"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                 </Section>
 
@@ -181,13 +192,13 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["hits"]}
                         title="Hits"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["pim"]}
                         title="Penalty Minutes"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                 </Section>
 
@@ -196,20 +207,20 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["powerPlayGoals", "powerPlayPoints"]}
                         title="Power Play (Production)"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                     <Subsection>
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["powerPlayTimeOnIcePerGame"]}
                             title="Power Play (Average TOI per Game)"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["powerPlayTimeOnIce"]}
                             title="Power Play (Total TOI per Season)"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                     </Subsection>
 
@@ -217,20 +228,20 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["shortHandedGoals", "shortHandedPoints"]}
                         title="Penalty Kill"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                     <Subsection>
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["shortHandedTimeOnIcePerGame"]}
                             title="Penalty Kill (Average TOI per Game)"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                         <PlayerStatLineChart
                             playerID={playerID}
                             statTypes={["shortHandedTimeOnIce"]}
                             title="Penalty Kill (Total TOI per Season)"
-                            playoffs={playoffs}
+                            allSeasonsStats={playerStats}
                         />
                     </Subsection>
                 </Section>
@@ -240,7 +251,7 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["gameWinningGoals", "overTimeGoals"]}
                         title="Game Winning and Overtime Goals"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                 </Section>
 
@@ -249,13 +260,13 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["blocked"]}
                         title="Blocked Shots"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                     <PlayerStatLineChart
                         playerID={playerID}
                         statTypes={["plusMinus"]}
                         title="Plus Minus"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                 </Section>
 
@@ -264,7 +275,7 @@ const PlayerSeasonGraphsPage = () => {
                         playerID={playerID}
                         statTypes={["faceOffPct"]}
                         title="Face-Off Percentage"
-                        playoffs={playoffs}
+                        allSeasonsStats={playerStats}
                     />
                 </Section>
                 <Text fontSize="sm" mt="28" color="gray.500">
