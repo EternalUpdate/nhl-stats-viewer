@@ -1,7 +1,9 @@
 ## NHL Stats Viewer
 This is a web app aiming to show the progress of NHL players' individual stats graphically over time for both the regular season and the playoffs. 
 
-The user can search for the player that interests them and the graphs will update to reflect the player's stats. Currently the app is limited to players included in active team rosters. Retired and LTIR players will not appear in the search.
+The user can search for the player that interests them and the graphs will update to reflect the player's stats. The stats can also be viewed on a per game basis, and as projections over 82 games. 
+
+Currently the app is limited to players included in active team rosters. Retired and LTIR players will not appear in the search. AHL players and prospects that have few games in the NHL might also not appear.
 
 The data is fetched from the NHL API as documented in [this repo](https://gitlab.com/dword4/nhlapi/-/tree/master).
 
@@ -16,7 +18,6 @@ The app is styled with [Chakra UI](https://github.com/chakra-ui/chakra-ui) and a
 https://nhl-stats-viewer.netlify.app
 
 ## Suggested Future Features
-* Sections for stats per game and projected over 82 games
 * Side navigation to jump to different sections
 * Collapsible sections?
 * Adding league averages to the graphs
