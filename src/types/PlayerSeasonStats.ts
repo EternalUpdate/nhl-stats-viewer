@@ -1,4 +1,4 @@
-import { addMinuteSecond, divideMinuteSecond } from "../utils/time-helpers";
+import { addMinuteSecond, divideMinuteSecond, multiplyMinuteSecond } from "../utils/time-helpers";
 
 /**
  * Player season stats as returned by NHL API calls for yearByYear, singleSeason, and careerRegularSeason, among others.
@@ -117,3 +117,43 @@ export function getPlayerSeasonStatsPerGame(stats: PlayerSeasonStats): PlayerSea
   }
 }
 
+/**
+ * Calculates the projected season stats over 82 games based on the per game rate where applicable.
+ * @param stats original PlayerSeasonStats (the per game rate is calculated in the function)
+ * @returns the projected season stats over 82 games where applicable
+ */
+export function getProjectedPlayerSeasonStats(stats: PlayerSeasonStats): PlayerSeasonStats {
+  const perGameStats = getPlayerSeasonStatsPerGame(stats);
+  const fullSeason = 82;
+
+   return {
+    season: perGameStats.season,
+    timeOnIce: perGameStats.timeOnIce,
+    assists: perGameStats.assists * fullSeason,
+    goals: perGameStats.goals * fullSeason,
+    pim: perGameStats.pim * fullSeason,
+    shots: perGameStats.shots * fullSeason,
+    games: perGameStats.games,
+    hits: perGameStats.hits * fullSeason,
+    powerPlayGoals: perGameStats.powerPlayGoals * fullSeason,
+    powerPlayPoints: perGameStats.powerPlayPoints * fullSeason,
+    powerPlayTimeOnIce: perGameStats.powerPlayTimeOnIce,
+    evenTimeOnIce: perGameStats.evenTimeOnIce,
+    penaltyMinutes: multiplyMinuteSecond(perGameStats.penaltyMinutes, fullSeason),
+    faceOffPct: perGameStats.faceOffPct,
+    shotPct: perGameStats.shotPct,
+    gameWinningGoals: perGameStats.gameWinningGoals,
+    overTimeGoals: perGameStats.overTimeGoals,
+    shortHandedGoals: perGameStats.shortHandedGoals,
+    shortHandedPoints: perGameStats.shortHandedPoints,
+    shortHandedTimeOnIce: perGameStats.shortHandedTimeOnIce,
+    blocked: perGameStats.blocked * fullSeason,
+    plusMinus: perGameStats.plusMinus * fullSeason,
+    points: perGameStats.points * fullSeason,
+    shifts: perGameStats.shifts * fullSeason,
+    timeOnIcePerGame: perGameStats.timeOnIcePerGame,
+    evenTimeOnIcePerGame: perGameStats.evenTimeOnIcePerGame,
+    shortHandedTimeOnIcePerGame: perGameStats.shortHandedTimeOnIcePerGame,
+    powerPlayTimeOnIcePerGame: perGameStats.powerPlayTimeOnIcePerGame
+   }
+}
