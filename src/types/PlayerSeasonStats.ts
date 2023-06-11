@@ -107,7 +107,7 @@ export function getPlayerSeasonStatsPerGame(stats: PlayerSeasonStats): PlayerSea
     shortHandedPoints: stats.shortHandedPoints,
     shortHandedTimeOnIce: stats.shortHandedTimeOnIce,
     blocked: stats.blocked / games,
-    plusMinus: stats.plusMinus,
+    plusMinus: stats.plusMinus / games,
     points: stats.points / games,
     shifts: stats.shifts / games,
     timeOnIcePerGame: divideMinuteSecond(stats.timeOnIce, games),
