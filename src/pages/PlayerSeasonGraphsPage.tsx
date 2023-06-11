@@ -26,6 +26,7 @@ import {
 } from "../utils/nhl-api-helpers";
 import { PlayerSeasonStats } from "../types/PlayerSeasonStats";
 import TotalsGraphs from "../components/TotalsGraphs";
+import PerGameGraphs from "../components/PerGameGraphs";
 
 // test
 // import "../utils/nhl-api-helpers";
@@ -142,7 +143,12 @@ const PlayerSeasonGraphsPage = () => {
                                     playerStats={playerStats}
                                 />
                             </TabPanel>
-                            <TabPanel>Stats per game</TabPanel>
+                            <TabPanel>
+                                <PerGameGraphs
+                                    playerID={playerID}
+                                    playerStats={playerStats}
+                                />
+                            </TabPanel>
                             <TabPanel>Projected stats over 82 games</TabPanel>
                         </TabPanels>
                     </Tabs>
