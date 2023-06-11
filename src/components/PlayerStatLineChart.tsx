@@ -63,29 +63,21 @@ const PlayerStatLineChart = ({
         labels: [],
         datasets: [],
     });
-    const [stats, setStats] = useState<PlayerSeasonStats[]>([]);
 
     useEffect(() => {
+        console.log(`PlayerStatLineChart playoffs: ${playoffs}`);
+
         const fetchData = async () => {
             try {
-                if (allSeasonsStats) {
-                    setStats(allSeasonsStats);
-                }
+                let stats: PlayerSeasonStats[] | undefined = allSeasonsStats;
 
                 if (playoffs) {
-                    if (!allSeasonsStats) {
-                        const newStats = await getAllSeasonsPlayerStats(
-                            playerID,
-                            true
-                        );
-                        setStats(newStats);
+                    if (!stats) {
+                        stats = await getAllSeasonsPlayerStats(playerID, true);
                     }
                 } else {
-                    if (!allSeasonsStats) {
-                        const newStats = await getAllSeasonsPlayerStats(
-                            playerID
-                        );
-                        setStats(newStats);
+                    if (!stats) {
+                        stats = await getAllSeasonsPlayerStats(playerID);
                     }
                 }
 
